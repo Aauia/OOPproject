@@ -4,50 +4,54 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Observable;
 import java.util.Set;
-import javax.swing.JTable;
+//import javax.swing.JTable;
 import Education.*;
-
 public class Student extends Person {
-
     private double gpa;
     private StudentOrganization studentLife;
     private List<Major> majors;
     private List<Request> requests;
     private Faculty faculty;
     private String studentId;
-    private Set<StudentResearcher> studentResearchers;
+    public StudentResearcher sr;
     private Set<Complaint> complaints;
     private Set<StudentOrganization> studentOrganizations;
     private Set<Course> courses;
-
-    // Полный конструктор для всех полей
-    public Student(String login, String password, String name, String surname, String middleName, 
-                   LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber, 
-                   String email, FamilyStatuses familyStatus, String corporateEmail, 
-                   double gpa, StudentOrganization studentLife, List<Major> majors, 
-                   List<Request> requests, Faculty faculty, String studentId, 
-                   Set<StudentResearcher> studentResearchers, Set<Complaint> complaints, 
-                   Set<StudentOrganization> studentOrganizations, Set<Course> courses) {
-        super(login, password, name, surname, middleName, dateOfBirth, gender, nationality, 
-              phoneNumber, email, familyStatus, corporateEmail);
-        this.gpa = gpa;
-        this.studentLife = studentLife;
-        this.majors = majors;
-        this.requests = requests;
-        this.faculty = faculty;
-        this.studentId = studentId;
-        this.studentResearchers = studentResearchers;
-        this.complaints = complaints;
-        this.studentOrganizations = studentOrganizations;
-        this.courses = courses;
-    }
-
-    // Конструктор по умолчанию
+    public Student(String login, String password, String name, String surname, String middleName,
+            LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber,
+            String email, FamilyStatuses familyStatus, String corporateEmail,
+            double gpa, StudentOrganization studentLife, List<Major> majors,
+            List<Request> requests, Faculty faculty, String studentId,
+            Set<Complaint> complaints, Set<StudentOrganization> studentOrganizations,
+            Set<Course> courses, boolean isResearcher) {
+			 super(login, password, name, surname, middleName, dateOfBirth, gender, nationality,
+			       phoneNumber, email, familyStatus, corporateEmail);
+			 this.gpa = gpa;
+			 this.studentLife = studentLife;
+			 this.majors = majors;
+			 this.requests = requests;
+			 this.faculty = faculty;
+			 this.studentId = studentId;
+			 this.complaints = complaints;
+			 this.studentOrganizations = studentOrganizations;
+			 this.courses = courses;
+			 
+			 if (isResearcher) {
+		            this.setAsResearcher(true);
+		        }
+}
+     
     public Student() {
         super();
     }
+    public void setAsResearcher(boolean isResearcher) {
+        if (isResearcher) {
+            this.sr = new StudentResearcher(this,sr); 
+        } else {
+            this.sr = null; 
+        }
+    }
 
-    // Геттеры и сеттеры
     public double getGpa() {
         return gpa;
     }
@@ -96,14 +100,7 @@ public class Student extends Person {
         this.studentId = studentId;
     }
 
-    public Set<StudentResearcher> getStudentResearchers() {
-        return studentResearchers;
-    }
-
-    public void setStudentResearchers(Set<StudentResearcher> studentResearchers) {
-        this.studentResearchers = studentResearchers;
-    }
-
+ 
     public Set<Complaint> getComplaints() {
         return complaints;
     }
@@ -191,3 +188,4 @@ public class Student extends Person {
 		
 	}
 }
+  

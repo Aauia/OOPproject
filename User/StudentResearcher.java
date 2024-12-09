@@ -1,7 +1,11 @@
 package User;
 
 public class StudentResearcher extends ResearcherDecorator {
-	public StudentResearcher(Researchable researcher) {
-        super(researcher);
+	private Student student;
+	
+	public StudentResearcher(Student student,Researchable researcher) {
+	    super(researcher);
+		this.student=student;
     }
+
 }

@@ -12,18 +12,29 @@ public abstract class Employee extends Person {
     private String timeOfExperience;
     private ArrayList<Request> requests;
     private Set<EmployeeResearcher> employeeResearchers;
+    public EmployeeResearcher er;
 
     public Employee(String login, String password, String name, String surname, String middleName,
                     LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber, String email,
                     FamilyStatuses familyStatus, String corporateEmail, double salary,
-                    String timeOfExperience) {
+                    String timeOfExperience,boolean isResearcher ) {
         super(login, password, name, surname, middleName, dateOfBirth, gender, nationality, phoneNumber, email,
                 familyStatus, corporateEmail);
         this.salary = salary;
         this.timeOfExperience = timeOfExperience;
         this.requests = new ArrayList<>(); 
         this.employeeResearchers = new HashSet<>(); 
+        if (isResearcher) {
+            this.setAsResearcher(true);
+        }
     } 
+    public void setAsResearcher(boolean isResearcher) {
+        if (isResearcher) {
+            this.er = new EmployeeResearcher(this,er); 
+        } else {
+            this.er = null; 
+        }
+    }
     public double getSalary() {
         return salary;
     }
