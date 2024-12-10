@@ -1,6 +1,7 @@
 package Education;
 
 import java.util.SortedSet;
+
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -12,14 +13,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-public class Course {
+import java.io.Serializable;
+public class Course implements Serializable {
     private String courseCode;
     private String courseName;
     private Access_Course type; 
     private SortedSet<Student> students;
-    private SortedSet<Teacher> teachers;
-    private Map<String, Integer> allowedSemester; 
+    private SortedSet<Teacher> teachers; 
     private Integer credit;
     private Map<Integer, Integer> studentAmount;
     private List<Lesson> lessons;
@@ -35,11 +35,14 @@ public class Course {
         this.credit = credit;
         this.students = new TreeSet<>();
         this.teachers = new TreeSet<>();
-        this.allowedSemester = new HashMap<>();
         this.studentAmount = new HashMap<>();
         this.lessons = new ArrayList<>();
         this.accessMajor = new ArrayList<>();
         this.teacherSchedule = new HashMap<>();
+    }
+    public Course(String courseName) {
+        super();  // Call the parent constructor, if needed.
+        this.setCourseName(courseName); // Or assign the name appropriately.
     }
 
     // Getters and Setters
@@ -83,13 +86,6 @@ public class Course {
         this.teachers = teachers;
     }
 
-    public Map<String, Integer> getAllowedSemester() {
-        return allowedSemester;
-    }
-
-    public void setAllowedSemester(Map<String, Integer> allowedSemester) {
-        this.allowedSemester = allowedSemester;
-    }
 
     public Integer getCredit() {
         return credit;

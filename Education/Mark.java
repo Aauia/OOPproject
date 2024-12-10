@@ -1,39 +1,45 @@
 package Education;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Class representing a student's mark.
- */
-public class Mark {
-    
+public class Mark  implements Serializable {
+
+
     // Attributes
-    private MarkType markType;  // Enum for the mark range/type
-    private String studentName; // Name of the student
-    private Integer markID;     // Unique ID for the mark
-    private String courseCode;  // Code of the related course
-    private Integer lessonID;   // ID of the lesson
-    private Integer totalSum;   // Total marks or score
+    private Integer markID;            // Unique ID for the mark
+    private String studentName;        // Name of the student
+    private Course course;             // Reference to the Course class
+    private Integer attestation1;      // Marks for first attestation
+    private Integer attestation2;      // Marks for second attestation
+    private Integer finalExam;         // Marks for the final exam
+    private Integer totalSum;          // Total marks or score
+    private MarkType markType;
+    
+    // Enum for the mark range/type
+	public Mark() {
+		
+	}
 
-    private Lesson lesson;      // Reference to the Lesson class
-
-    // Constructors
-    public Mark(Integer markID, String studentName, String courseCode, MarkType markType, Lesson lesson, Integer totalSum) {
+    // Constructor
+    public Mark(Integer markID, String studentName, Course course, 
+                Integer attestation1, Integer attestation2, Integer finalExam) {
         this.markID = markID;
         this.studentName = studentName;
-        this.courseCode = courseCode;
-        this.markType = markType;
-        this.lesson = lesson;
-        this.totalSum = totalSum;
+        this.course = course;
+        this.attestation1 = attestation1;
+        this.attestation2 = attestation2;
+        this.finalExam = finalExam;
+        calculateTotalSumAndMarkType();
     }
 
     // Getters and Setters
-    public MarkType getMarkType() {
-        return markType;
+    public Integer getMarkID() {
+        return markID;
     }
 
-    public void setMarkType(MarkType markType) {
-        this.markType = markType;
+    public void setMarkID(Integer markID) {
+        this.markID = markID;
     }
 
     public String getStudentName() {
@@ -44,52 +50,55 @@ public class Mark {
         this.studentName = studentName;
     }
 
-    public Integer getMarkID() {
-        return markID;
+    public Course getCourse() {
+        return course;
     }
 
-    public void setMarkID(Integer markID) {
-        this.markID = markID;
+    public void setCourse(Course course) {
+        this.course = course;
     }
 
-    public String getCourseCode() {
-        return courseCode;
+    public Integer getAttestation1() {
+        return attestation1;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
+    public void setAttestation1(Integer attestation1) {
+        this.attestation1 = attestation1;
+        calculateTotalSumAndMarkType();
     }
 
-    public Integer getLessonID() {
-        return lessonID;
+    public Integer getAttestation2() {
+        return attestation2;
     }
 
-    public void setLessonID(Integer lessonID) {
-        this.lessonID = lessonID;
+    public void setAttestation2(Integer attestation2) {
+        this.attestation2 = attestation2;
+        calculateTotalSumAndMarkType();
+    }
+
+    public Integer getFinalExam() {
+        return finalExam;
+    }
+
+    public void setFinalExam(Integer finalExam) {
+        this.finalExam = finalExam;
+        calculateTotalSumAndMarkType();
     }
 
     public Integer getTotalSum() {
         return totalSum;
     }
 
-    public void setTotalSum(Integer totalSum) {
-        this.totalSum = totalSum;
+    public MarkType getMarkType() {
+        return markType;
     }
 
-    public Lesson getLesson() {
-        return lesson;
-    }
+    // Calculate totalSum and markType
+    private void calculateTotalSumAndMarkType() {
+        this.totalSum = (attestation1 != null ? attestation1 : 0)
+                + (attestation2 != null ? attestation2 : 0)
+                + (finalExam != null ? finalExam : 0);
 
-    public void setLesson(Lesson lesson) {
-        this.lesson = lesson;
-    }
-
-    // Operations
-
-    /**
-     * Update the mark type based on the total score.
-     */
-    public void updateMarkType() {
         if (totalSum >= 95) {
             this.markType = MarkType.A_PLUS;
         } else if (totalSum >= 90) {
@@ -105,22 +114,22 @@ public class Mark {
         } else if (totalSum >= 50) {
             this.markType = MarkType.C_MINUS;
         } else {
-            this.markType = MarkType.F; // Below 50
+            this.markType = MarkType.F;
         }
     }
 
-    /**
-     * Display mark details.
-     */
+    // Display mark details
     public void displayMarkDetails() {
         System.out.println("Mark ID: " + markID);
         System.out.println("Student: " + studentName);
-        System.out.println("Course Code: " + courseCode);
+        System.out.println("Course: " + (course != null ? course.getCourseName() : "N/A"));
+        System.out.println("Attestation 1: " + attestation1);
+        System.out.println("Attestation 2: " + attestation2);
+        System.out.println("Final Exam: " + finalExam);
         System.out.println("Total Marks: " + totalSum);
         System.out.println("Mark Type: " + markType);
-        System.out.println("Lesson: " + (lesson != null ? lesson.getLessonID() : "N/A"));
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,3 +143,5 @@ public class Mark {
         return Objects.hash(markID);
     }
 }
+
+

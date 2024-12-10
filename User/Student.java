@@ -1,4 +1,7 @@
 package User;
+import java.util.HashMap;
+import Education.Transcript;
+
 
 import java.time.LocalDate;
 import java.util.List;
@@ -6,7 +9,7 @@ import java.util.Observable;
 import java.util.Set;
 //import javax.swing.JTable;
 import Education.*;
-public class Student extends Person {
+public class Student extends Person  {
     private double gpa;
     private StudentOrganization studentLife;
     private List<Major> majors;
@@ -15,15 +18,17 @@ public class Student extends Person {
     private String studentId;
     public StudentResearcher sr;
     private Set<Complaint> complaints;
+    private Schedule schedule;
+    private Transcript transcript;
     private Set<StudentOrganization> studentOrganizations;
-    private Set<Course> courses;
+
     public Student(String login, String password, String name, String surname, String middleName,
             LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber,
             String email, FamilyStatuses familyStatus, String corporateEmail,
             double gpa, StudentOrganization studentLife, List<Major> majors,
             List<Request> requests, Faculty faculty, String studentId,
             Set<Complaint> complaints, Set<StudentOrganization> studentOrganizations,
-            Set<Course> courses, boolean isResearcher) {
+            HashMap<Course,Mark> courses, boolean isResearcher) {
 			 super(login, password, name, surname, middleName, dateOfBirth, gender, nationality,
 			       phoneNumber, email, familyStatus, corporateEmail);
 			 this.gpa = gpa;
@@ -33,13 +38,15 @@ public class Student extends Person {
 			 this.faculty = faculty;
 			 this.studentId = studentId;
 			 this.complaints = complaints;
-			 this.studentOrganizations = studentOrganizations;
-			 this.courses = courses;
-			 
+			 this.studentOrganizations = studentOrganizations;			 
 			 if (isResearcher) {
 		            this.setAsResearcher(true);
 		        }
 }
+    public Student(String name) {
+        super();  // Call the parent constructor, if needed.
+        this.setName(name); // Or assign the name appropriately.
+    }
      
     public Student() {
         super();
@@ -117,13 +124,7 @@ public class Student extends Person {
         this.studentOrganizations = studentOrganizations;
     }
 
-    public Set<Course> getCourses() {
-        return courses;
-    }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
-    }
 
     // Бизнес-методы
     public void joinStudentOrganization(StudentOrganization organization) {
@@ -142,45 +143,30 @@ public class Student extends Person {
         }
     }
 
-    public List<Course> viewCourses() {
-        // Return the list of enrolled courses
-        return List.copyOf(courses);
-    }
+   
 
-    public JTable viewSchedule() {
-        // Placeholder for schedule table
-        return new JTable();
-    }
-
-    public JTable studentJournal() {
-        // Placeholder for journal table
-        return new JTable();
-    }
 
     public String viewTeacherInfo() {
         // Placeholder for fetching teacher information
         return "Teacher information not available.";
     }
-
-    public JTable viewMarks() {
-        // Placeholder for marks table
-        return new JTable();
+    public Schedule getSchedule() {
+        return schedule;
     }
 
-    public JTable viewTranscript() {
-        // Placeholder for transcript table
-        return new JTable();
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 
-    public JTable rateTeacher() {
-        // Placeholder for teacher rating functionality
-        return new JTable();
+    public Transcript getTranscript() {
+        return transcript;
     }
 
-    public StudentOrganization manageStudentOrganizations() {
-        // Placeholder for managing student organizations
-        return new StudentOrganization();
+    public void setTranscript(Transcript transcript) {
+        this.transcript = transcript;
     }
+
+    
 
 	@Override
 	public void update(Observable o, Object arg) {

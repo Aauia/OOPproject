@@ -94,12 +94,7 @@ public class Teacher extends Employee {
         return List.copyOf(courses);
     }
 
-    public JTable viewStudents() {
-        // Placeholder for student viewing logic
-        return new JTable();
-    }
-
-
+  
 	@Override
 	public void update(Observable o, Object arg) {
 		// TODO Auto-generated method stub

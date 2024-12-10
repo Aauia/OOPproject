@@ -6,16 +6,19 @@ import User.Student;
 import java.util.HashSet;
 import java.util.Objects;
 
-public class Faculty {
 
-    // Attributes
-    private Faculties faculty;        
-    private Integer studentAmount;    
-    private Integer teacherAmount;    
-    private Integer courseCode;       
-    private Set<Student> students;    
+import java.io.Serializable; // Import Serializable
 
-    // Constructor
+
+public class Faculty implements Serializable { // Implement Serializable
+    private static final long serialVersionUID = 1L; // Recommended for version control
+
+    private Faculties faculty;
+    private Integer studentAmount;
+    private Integer teacherAmount;
+    private Integer courseCode;
+    private Set<Student> students;
+
     public Faculty(Faculties faculty, Integer studentAmount, Integer teacherAmount, Integer courseCode) {
         this.faculty = faculty;
         this.studentAmount = studentAmount;
@@ -23,6 +26,8 @@ public class Faculty {
         this.courseCode = courseCode;
         this.students = new HashSet<>();
     }
+
+
 
     // Getters and Setters
 

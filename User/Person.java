@@ -9,7 +9,7 @@ public abstract class Person implements Serializable,Observer {
 	private static final long serialVersionUID = 1L;
 	private String login;
 	private String password;
-    private String name;
+    protected String name;
     private String surname;
     private String middleName;
     private LocalDate dateOfBirth;

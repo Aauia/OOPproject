@@ -1,11 +1,11 @@
 package Education;
 
 import java.util.Objects;
-
+import java.io.Serializable; 
 /**
  * Represents an access condition based on major, semester, and access type.
  */
-public class AccessCondition {
+public class AccessCondition implements Serializable {
 
     // Attributes
     private String major;

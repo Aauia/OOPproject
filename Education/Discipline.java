@@ -2,24 +2,24 @@ package Education;
 
 import java.util.List;
 import java.util.Objects;
+import java.io.Serializable;
 
-/**
- * Represents a Discipline with a name, code, faculty, and associations.
- */
-public class Discipline {
+public class Discipline implements Serializable {
 
     // Attributes
     private String name;
     private String code;
     private Faculty primaFaculty; // Custom type, assumed to be defined elsewhere
     private List<DisciplineAssociation> associations; // List of associations
+    private List<Discipline> prerequisites;
 
     // Constructor
-    public Discipline(String name, String code, Faculty primaFaculty, List<DisciplineAssociation> associations) {
+    public Discipline(String name, String code, Faculty primaFaculty, List<DisciplineAssociation> associations, List<Discipline> prerequisites) {
         this.name = name;
         this.code = code;
         this.primaFaculty = primaFaculty;
         this.associations = associations;
+        this.prerequisites = prerequisites;
     }
 
     // Getters and Setters
@@ -54,6 +54,13 @@ public class Discipline {
     public void setAssociations(List<DisciplineAssociation> associations) {
         this.associations = associations;
     }
+    public List<Discipline> getPrerequisite() {
+        return this.prerequisites;
+    }
+
+    public void setPrerequisite(List<Discipline> prerequisites) {
+        this.prerequisites = prerequisites;
+    }
 
     // Operations
     public void displayInfo() {
@@ -73,5 +80,12 @@ public class Discipline {
     @Override
     public int hashCode() {
         return Objects.hash(code);
+    }
+    public String toString() {
+        return "Discipline{" +
+               "name='" + name + '\'' +
+               ", code='" + code + '\'' +
+               ", primaFaculty=" + (primaFaculty != null ? primaFaculty.getFaculty() : "None") +
+               '}';
     }
 }
