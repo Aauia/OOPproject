@@ -1,45 +1,48 @@
 package Education;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
+import User.Student;
 
-public class Transcript implements Serializable {
-    // Map semester -> (Discipline -> GradeDetails)
-    private Map<String, Map<Discipline, Mark>> semesterRecords;
+public class Transcript {
+    private Student student;                                           
+    private int semester;                                              
+    private Map<Course, ArrayList<Mark>> studentMarks;                 
 
-    public Transcript() {
-        this.semesterRecords = new HashMap<>();
+    public Transcript(Student student, int semester) {
+        this.student = student;
+        this.semester = semester;
+        this.studentMarks = new HashMap<>();
     }
 
-    // Add a record for a specific semester
-    public void addRecord(String semester, Discipline discipline, int attestation1, int attestation2, int finalExam) {
-        semesterRecords.putIfAbsent(semester, new HashMap<>());
-        GradeDetails grades = new GradeDetails(attestation1, attestation2, finalExam);
-        semesterRecords.get(semester).put(discipline, grades);
+    public Student getStudent() {
+        return student;
     }
 
-    // Get records for a specific semester
-    public Map<Discipline, GradeDetails> getRecordsForSemester(String semester) {
-        return semesterRecords.getOrDefault(semester, new HashMap<>());
+    public int getSemester() {
+        return semester;
     }
 
-    // Get all semester records
-    public Map<String, Map<Discipline, GradeDetails>> getAllRecords() {
-        return semesterRecords;
+    public void addMarksForCourse(Course course, Mark mark) {
+       //
     }
 
-    // Display transcript
-    public void displayTranscript() {
-        for (Map.Entry<String, Map<Discipline, GradeDetails>> semesterEntry : semesterRecords.entrySet()) {
-            System.out.println("Semester: " + semesterEntry.getKey());
-            for (Map.Entry<Discipline, GradeDetails> record : semesterEntry.getValue().entrySet()) {
-                System.out.println("- Discipline: " + record.getKey().getName());
-                System.out.println("  " + record.getValue());
-            }
-        }
+    public void viewStudentMarks() {
+        //
     }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transcript that = (Transcript) o;
+        return Objects.equals(student, that.student) &&
+               Objects.equals(semester, that.semester);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(student, semester);
+    }
+
 }
