@@ -9,7 +9,8 @@ import User.*;
 
 
 public class Managing {
-    Scanner in = new Scanner(System.in);
+    private final Scanner in = new Scanner(System.in);
+  
 
     private void printList(List list) {
         for (int i = 0; i < list.size(); i++)
@@ -85,7 +86,7 @@ public class Managing {
         }
     }
 
-    private void addStudent() {
+    public void addStudent() {
         System.out.println("Enter login: ");
         String login = in.next();
         System.out.println("Enter password: ");
@@ -129,7 +130,7 @@ public class Managing {
         System.out.println("Student added! ");
     }
 
-    private void addCourse() {
+    public void addCourse() {
         System.out.println("Enter name of the course: ");
         String courseName = in.next();
         System.out.println("Enter course code: ");
@@ -145,7 +146,7 @@ public class Managing {
         System.out.println("Course added! ");
     }
 
-    private void addCurriculum() {
+    public void addCurriculum() {
         System.out.println("Enter the major name: ");
         String majorName = in.next();
         System.out.println("Enter the faculty for the major: ");
@@ -208,8 +209,15 @@ public class Managing {
     public void run() throws IOException {
         try {
             System.out.println("Welcome!");
+
+            // Admin authentication
+            if (!authenticateAdmin()) {
+                System.out.println("Access denied. Only admins can access this system.");
+                return;
+            }
+
             menu: while (true) {
-                System.out.println("What do you want to do?\n 1) Add student \n 2) Add course \n 3) Add course to a Student \n 4) View students \n 5) Add Curriculum \n 6) Exit \n 7) Show Cources");
+                System.out.println("What do you want to do?\n 1) Add student \n 2) Add course \n 3) Add course to a Student \n 4) View students \n 5) Add Curriculum \n 6) Exit \n 7) Show Courses");
                 int choice = in.nextInt();
                 switch (choice) {
                     case 1:
@@ -288,5 +296,22 @@ public class Managing {
             save();
         }
     }
+
+
+    private boolean authenticateAdmin() {
+        System.out.println("Please enter username:");
+        String username = in.next();
+        System.out.println("Please enter password:");
+        String password = in.next();
+
+    
+        String adminUsername = "admin";
+        String adminPassword = "password123";
+
+        return username.equals(adminUsername) && password.equals(adminPassword);
+    }
+
 }
+
+
 
