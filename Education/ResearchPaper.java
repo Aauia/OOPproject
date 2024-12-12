@@ -13,9 +13,16 @@ public class ResearchPaper {
     private List<ResearchPaper> references;
     private List<ResearchPaper> citations;
     private List<String> keywords;
+    private String category;      // Category of the paper (e.g., AI, Data Science)
+    private boolean isApproved;   // Paper approval status
+    private boolean isNew;
 
     // Constructor
-    public ResearchPaper() {
+    public ResearchPaper(String title, String category) {
+    	this.title = title;
+        this.category = category;
+        this.isApproved = false;
+        this.isNew = true;
         authors = new ArrayList<>();
         references = new ArrayList<>();
         citations = new ArrayList<>();
@@ -23,9 +30,21 @@ public class ResearchPaper {
     }
 
     // Methods
-    public String getCitation() {
+    public List<ResearchPaper> getCitation() {
         // Return citation details (simplified example)
-        return "Citation format placeholder";
+        return this.citations;
+    }
+    
+    public String getTitle() { return title; }
+    public String getCategory() { return category; }
+    public boolean isApproved() { return isApproved; }
+    public boolean isNew() { return isNew; }
+    
+    
+
+    // Mark as viewed (remove "NEW" status)
+    public void markAsViewed() {
+        this.isNew = false;
     }
 
     public void addAuthor(Researcher author) {
