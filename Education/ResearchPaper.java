@@ -39,13 +39,6 @@ public class ResearchPaper {
     public String getCategory() { return category; }
     public boolean isApproved() { return isApproved; }
     public boolean isNew() { return isNew; }
-    
-    
-
-    // Mark as viewed (remove "NEW" status)
-    public void markAsViewed() {
-        this.isNew = false;
-    }
 
     public void addAuthor(Researcher author) {
         authors.add(author);
