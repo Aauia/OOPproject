@@ -13,43 +13,54 @@ import Education.*;
 import User.*;
 
 
-
 public class Data implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    protected Vector<Student> students;         // List of students
-    protected Vector<Teacher> teachers;         // List of teachers
-    protected Vector<Course> courses;           // List of courses
+    protected Vector<Student> students;
+    protected Vector<Employee> employees;
+    protected Vector<Teacher> teachers;         
+    protected Vector<Course> courses;        
     protected Vector<Lesson> lessons;
     protected Vector<Curriculum> rup;
+    private Vector<Admin> admins;
     
-    public static Data INSTANCE;              // Singleton instance
+    public static Data INSTANCE; 
+    
 
-    // Static initializer block to load data or create a new instance
+    
     static {
         if (new File("UniversityData").exists()) {
             try {
                 INSTANCE = read();
             } catch (Exception e) {
                 e.printStackTrace();
-                INSTANCE = new Data();  // Fallback to new instance if read fails
+                INSTANCE = new Data();  
             }
         } else {
             INSTANCE = new Data();
         }
     }
 
-    // Private constructor to enforce singleton pattern
-     Data() {
+     private Data() {
         students = new Vector<>();
         teachers = new Vector<>();
         courses = new Vector<>();
         lessons = new Vector<>();
             rup = new Vector<>();
+            admins = new Vector<>();
+            admins.add(new Admin("admin1", "password123", "John", "Doe", "Middle", 
+                    LocalDate.of(1980, 5, 15), Gender.MALE, "American", 
+                    1234567890, "admin1@example.com", FamilyStatuses.SINGLE, 
+                    "jdoe@university.edu", 5000.0, "10 years", "AdminHead", false));
+            admins.add(new Admin("admin2", "pass456", "Jane", "Smith", "Middle", 
+                    LocalDate.of(1990, 3, 20), Gender.FEMALE, "British", 
+                    987654321, "admin2@example.com", FamilyStatuses.MARRIED, 
+                    "jsmith@university.edu", 4500.0, "5 years", "AdminAssistant", false));
         
     }
+     
 
-    // Serialize the INSTANCE to file
+
     public static void write() throws IOException {
         try (FileOutputStream fos = new FileOutputStream("UniversityData");
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
@@ -58,7 +69,7 @@ public class Data implements Serializable {
         }
     }
 
-    // Deserialize the INSTANCE from file
+
     public static Data read() throws IOException, ClassNotFoundException {
         try (FileInputStream fis = new FileInputStream("UniversityData");
              ObjectInputStream oin = new ObjectInputStream(fis)) {
@@ -66,17 +77,17 @@ public class Data implements Serializable {
         }
     }
 
-    // Utility to generate unique student IDs
+   
     public static int nextStudentId() {
         return INSTANCE.students.size() + 1;
     }
 
-    // Utility to generate unique teacher IDs
+
     public static int nextTeacherId() {
         return INSTANCE.teachers.size() + 1;
     }
 
-    // Add methods for managing entities
+   
     
     
     public void addCurriculum(Curriculum curriculum) {
@@ -86,6 +97,10 @@ public class Data implements Serializable {
     public void addStudent(Student student) {
         students.add(student);
     }
+    public void addAdmin(Admin admin) {
+        admins.add(admin);
+    }
+
 
     public void addTeacher(Teacher teacher) {
         teachers.add(teacher);
@@ -109,6 +124,9 @@ public class Data implements Serializable {
     public Vector<Teacher> getTeachers() {
         return teachers;
     }
+    public Vector<Admin> getAdmins() {
+        return admins;
+    }
 
     public Vector<Course> getCourses() {
         return courses;
@@ -118,7 +136,7 @@ public class Data implements Serializable {
         return lessons;
     }
 
-    // Display all stored entities for debugging
+   
     public void displayData() {
         System.out.println("Students:");
         students.forEach(System.out::println);
