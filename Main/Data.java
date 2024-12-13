@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.*;
 import Education.*;
 import User.*;
@@ -21,9 +22,9 @@ public class Data implements Serializable {
     protected Vector<Teacher> teachers;         
     protected Vector<Course> courses;        
     protected Vector<Lesson> lessons;
-    protected Vector<Curriculum> rup;
-    private Vector<Admin> admins;
-    
+    private Vector<Curriculum> rup;
+    protected Vector<Admin> admins;
+  
     public static Data INSTANCE; 
     
 
@@ -46,7 +47,7 @@ public class Data implements Serializable {
         teachers = new Vector<>();
         courses = new Vector<>();
         lessons = new Vector<>();
-            rup = new Vector<>();
+            setRup(new Vector<>());
             admins = new Vector<>();
             admins.add(new Admin("admin1", "password123", "John", "Doe", "Middle", 
                     LocalDate.of(1980, 5, 15), Gender.MALE, "American", 
@@ -56,6 +57,7 @@ public class Data implements Serializable {
                     LocalDate.of(1990, 3, 20), Gender.FEMALE, "British", 
                     987654321, "admin2@example.com", FamilyStatuses.MARRIED, 
                     "jsmith@university.edu", 4500.0, "5 years", "AdminAssistant", false));
+            
         
     }
      
@@ -91,7 +93,7 @@ public class Data implements Serializable {
     
     
     public void addCurriculum(Curriculum curriculum) {
-    	rup.add(curriculum);
+    	getRup().add(curriculum);
     }
 
     public void addStudent(Student student) {
@@ -115,7 +117,7 @@ public class Data implements Serializable {
     }
     
     public Vector<Curriculum> getCurriculum(){
-    	return rup;
+    	return getRup();
     }
     public Vector<Student> getStudents() {
         return students;
@@ -147,6 +149,17 @@ public class Data implements Serializable {
         System.out.println("Lessons:");
         lessons.forEach(System.out::println);
         System.out.println("Rups:");
-        rup.forEach(System.out::println);
+        getRup().forEach(System.out::println);
     }
+
+
+	public Vector<Curriculum> getRup() {
+		return rup;
+	}
+
+
+
+	public void setRup(Vector<Curriculum> rup) {
+		this.rup = rup;
+	}
 }
