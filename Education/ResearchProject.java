@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import User.Person;
 
-public class ResearchProjects {
+public class ResearchProject {
 
     // Attributes
     private String topic;
@@ -14,7 +14,7 @@ public class ResearchProjects {
     private List<Person> participants;
 
     // Constructor
-    public ResearchProjects(String topic) {
+    public ResearchProject(String topic) {
         this.topic = topic;
         this.publishedPapers = new ArrayList<>();
         this.participants = new ArrayList<>();
@@ -71,7 +71,7 @@ public class ResearchProjects {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ResearchProjects that = (ResearchProjects) o;
+        ResearchProject that = (ResearchProject) o;
         return Objects.equals(topic, that.topic) &&
                Objects.equals(participants, that.participants);
     }
