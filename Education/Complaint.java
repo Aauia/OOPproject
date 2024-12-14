@@ -10,25 +10,21 @@ import User.Teacher;
 
 public class Complaint {
     
-    private Integer complainCode;
+    private Integer complainID;
     private String complainText;
     private Teacher complainSender;
     private String complainGuilty;
     private UrgencyLevel levelOfUrgency;
     private List<Student> complainedTo;
-    private Set<Student> students;
-    private Set<Teacher> teachers;
-    private Dean dean;
-    
-    
+    private StatusInfo status;
     // Getter and Setter Methods
     
-    public Integer getComplainCode() {
-        return this.complainCode;
+    public Integer complainID() {
+        return this.complainID;
     }
     
-    public void setComplainCode(Integer complainCode) {
-        this.complainCode = complainCode;
+    public void setComplainCode(Integer complainID) {
+        this.complainID = complainID;
     }
     
     public String getComplainText() {
@@ -78,7 +74,7 @@ public class Complaint {
     }
     
     public int getCode() {
-        return complainCode != null ? complainCode : -1;
+        return complainID != null ? complainID : -1;
     }
     
     public String getGuilty() {
@@ -94,11 +90,16 @@ public class Complaint {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Complaint that = (Complaint) o;
-        return Objects.equals(complainCode, that.complainCode);
+        return Objects.equals(complainID(), that.complainID());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(complainCode);
+        return Objects.hash(complainID());
     }
+
+	public void setStatus(StatusInfo approved) {
+		this.status=approved;
+		
+	}
 }
