@@ -13,9 +13,8 @@ public class Request {
     private String requestSender;
     private RequestType requestType;
     private String additionalAttribute;
-    private List<Employee> allRequests;
-    private Employee employee;
-    private Student student;
+    private Employee RequestSender;
+
     
     // Getters and Setters
     
@@ -51,30 +50,7 @@ public class Request {
         this.additionalAttribute = additionalAttribute;
     }
     
-    public List<Employee> getAllRequests() {
-        return this.allRequests;
-    }
-    
-    public void setAllRequests(List<Employee> allRequests) {
-        this.allRequests = allRequests;
-    }
-    
-    public Employee getEmployee() {
-        return this.employee;
-    }
-    
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-    
-    public Student getStudent() {
-        return this.student;
-    }
-    
-    public void setStudent(Student student) {
-        this.student = student;
-    }
-    
+  
 
     public String getRequestSenderInfo() {
         return this.requestSender;
