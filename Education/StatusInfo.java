@@ -1,7 +1,7 @@
 package Education;
 
 public enum StatusInfo {
-	COMPLETED,
+	APPROVED,
 	IN_PROGRESS,
 	REJECTED;
 }
