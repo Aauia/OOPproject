@@ -24,6 +24,8 @@ public class Data implements Serializable {
     protected Vector<Lesson> lessons;
     private Vector<Curriculum> rup;
     protected Vector<Admin> admins;
+    protected Vector<Complaint> complaints;
+    protected Vector<Request> requests;
   
     public static Data INSTANCE; 
     
@@ -47,6 +49,8 @@ public class Data implements Serializable {
         teachers = new Vector<>();
         courses = new Vector<>();
         lessons = new Vector<>();
+	complaints=new Vector<>();
+        requests=new Vector<>();
             setRup(new Vector<>());
             admins = new Vector<>();
             admins.add(new Admin("admin1", "password123", "John", "Doe", "Middle", 
@@ -129,6 +133,16 @@ public class Data implements Serializable {
     public Vector<Admin> getAdmins() {
         return admins;
     }
+    public Vector<Complaint> getComplaints() {
+	return complaints;
+    }
+
+
+     public Vector<Request> getRequests() {
+	 return requests;
+     }
+
+
 
     public Vector<Course> getCourses() {
         return courses;
