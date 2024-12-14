@@ -1,185 +1,117 @@
-package Views;
+package User;
 
-import java.io.IOException;
-import java.util.Scanner;
-import Main.Data;
-import User.Person;
 import Education.Book;
+import Main.Data;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-public class BaseView {
-    private static void save() throws IOException {
-        Data.write();
+public class Librarian extends Employee {
+    private static final long serialVersionUID = 1L;
+    private Map<Person, List<Book>> borrowedBooks;
+    private Map<Book, LocalDate> dueDates;
+
+    // Constructor
+    public Librarian(String login, String password, String name, String surname, String middleName,
+    	      LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber, String email,
+    	      FamilyStatuses familyStatus, String corporateEmail, double salary, String timeOfExperience,
+    	      boolean isResearcher) {
+    	    super(login, password, name, surname, middleName, dateOfBirth, gender, nationality, phoneNumber, email, familyStatus,
+    	        corporateEmail, salary, timeOfExperience, isResearcher);
+    	    this.borrowedBooks = new HashMap<>();
+    	    this.dueDates = new HashMap<>();
+    	    }
+
+    public void addBook(String title, String genre, String author, double price, int quantity) {
+        Book newBook = new Book(title, genre, author, price, quantity);
+        Data.INSTANCE.getBooks().add(newBook);
+        System.out.println("Book added: " + title);
     }
 
-    private void exit() {
-        System.out.println("Bye bye");
-        try {
-            save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public static void displayMenu(Person person) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        boolean exit = false;
-
-        try {
-            while (!exit) {
-                System.out.println("\n=== University Management System ===");
-                System.out.println("1. Manage Researchers");
-                System.out.println("2. Manage Journals");
-                System.out.println("3. Manage News");
-                System.out.println("4. Library");
-                System.out.println("5. Exit");
-                System.out.print("Enter your choice: ");
-
-                int choice = scanner.nextInt();
-                scanner.nextLine(); // Consume the newline character
-
-                switch (choice) {
-                    case 1:
-                        manageResearchers();
-                        break;
-                    case 2:
-                        manageJournals();
-                        break;
-                    case 3:
-                        manageNews();
-                        break;
-                    case 4:
-                        libraryMenu(person); // Navigate to library menu
-                        break;
-                    case 5:
-                        System.out.println("Exiting the system. Goodbye!");
-                        exit = true;
-                        break;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Something bad happened... \n Saving resources...");
-            e.printStackTrace();
-            save();
-        } finally {
-            scanner.close();
-        }
-    }
-
-    private static void libraryMenu(Person person) {
-        Scanner scanner = new Scanner(System.in);
-        boolean exitLibraryMenu = false;
-
-        while (!exitLibraryMenu) {
-            System.out.println("\n=== Library Menu ===");
-            System.out.println("1. Borrow Book");
-            System.out.println("2. Return Book");
-            System.out.println("3. Report Lost Book");
-            System.out.println("4. Back to Main Menu");
-            System.out.print("Enter your choice: ");
-
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // Consume the newline character
-
-            switch (choice) {
-                case 1:
-                    borrowBook(person); // Borrow a book
-                    break;
-                case 2:
-                    returnBook(person); // Return a book
-                    break;
-                case 3:
-                    reportLostBook(person); // Report a lost book
-                    break;
-                case 4:
-                    exitLibraryMenu = true; // Return to the main menu
-                    break;
-                default:
-                    System.out.println("Invalid choice. Please try again.");
+    // View all available books
+    public void viewAvailableBooks() {
+        System.out.println("Available Books:");
+        for (Book book : Data.INSTANCE.getBooks()) {
+            if (book.getQuantity() > 0) {
+                System.out.println(book);
             }
         }
     }
 
-    private static void borrowBook(Person person) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the title of the book you want to borrow: ");
-        String bookTitle = scanner.nextLine();
-
-        // Find the book from Data
-        Book book = findBook(bookTitle);
-        if (book != null && book.getQuantity() > 0) {
-            book.borrow(); // Reduce quantity of the book
-            System.out.println("You have successfully borrowed the book: " + book.getTitle());
-            // Add the borrowed book to the person's record (can be added to a list of borrowed books for the person)
-        } else {
-            System.out.println("Sorry, this book is currently unavailable.");
-        }
-    }
-
-    private static void returnBook(Person person) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the title of the book you want to return: ");
-        String bookTitle = scanner.nextLine();
-
-        // Find the book from Data
-        Book book = findBook(bookTitle);
-        if (book != null) {
-            book.returnBook(); // Increase quantity of the book
-            System.out.println("You have successfully returned the book: " + book.getTitle());
-
-            // Check if the book was returned after the due date and apply fine
-            LocalDate dueDate = LocalDate.now().minusMonths(6); // assuming 6 months is the due date
-            long daysLate = ChronoUnit.DAYS.between(dueDate, LocalDate.now());
-            if (daysLate > 0) {
-                double fine = book.getPrice() * 2; // Fine is twice the price of the book
-                System.out.println("You have returned the book late. The fine is: $" + fine);
-            }
-        } else {
-            System.out.println("Sorry, the book was not found.");
-        }
-    }
-
-    private static void reportLostBook(Person person) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the title of the lost book: ");
-        String bookTitle = scanner.nextLine();
-
-        // Find the book from Data
-        Book book = findBook(bookTitle);
-        if (book != null) {
-            // Mark the book as lost
-            book.setQuantity(0); // You can choose to reduce the quantity to zero or remove it from the inventory
-            double fine = book.getPrice() * 2; // Fine is twice the price of the book
-            System.out.println("The book has been marked as lost. The fine is: $" + fine);
-        } else {
-            System.out.println("Sorry, the book was not found.");
-        }
-    }
-
-    private static Book findBook(String bookTitle) {
+    // Borrow a book for a person
+    public void borrowBook(Person person, String bookTitle) {
         for (Book book : Data.INSTANCE.getBooks()) {
             if (book.getTitle().equalsIgnoreCase(bookTitle)) {
-                return book;
+                if (book.getQuantity() > 0) {
+                    book.borrow(); 
+                    borrowedBooks.computeIfAbsent(person, k -> new ArrayList<>()).add(book);
+                    dueDates.put(book, LocalDate.now().plusMonths(6));
+                    System.out.println(person.getName() + " borrowed: " + bookTitle);
+                } else {
+                    System.out.println("Sorry, the book is out of stock: " + bookTitle);
+                }
+                return;
             }
         }
-        return null;
+        System.out.println("Book not found: " + bookTitle);
     }
 
-    public static void manageResearchers() {
-        System.out.println("\n=== Manage Researchers ===");
-        System.out.println("This feature is under development.");
+    // Report a lost book and fine the person
+    public void reportLostBook(Person person, String bookTitle) {
+        for (Book book : Data.INSTANCE.getBooks()) {
+            if (book.getTitle().equalsIgnoreCase(bookTitle)) {
+                if (borrowedBooks.containsKey(person) && borrowedBooks.get(person).contains(book)) {
+                    // Calculate fine (2 times the book price)
+                    double fine = 2 * book.getPrice();
+                    System.out.println(person.getName() + " reported the book '" + bookTitle + "' as lost.");
+                    System.out.println("Fine for the lost book: $" + fine);
+                    borrowedBooks.get(person).remove(book);  // Remove the book from borrowed list
+                    return;
+                } else {
+                    System.out.println("The person has not borrowed this book.");
+                }
+            }
+        }
+        System.out.println("Book not found in the library: " + bookTitle);
     }
 
-    public static void manageJournals() {
-        System.out.println("\n=== Manage Journals ===");
-        System.out.println("This feature is under development.");
+    // Return a borrowed book
+    public void returnBook(Person person, String bookTitle) {
+        if (borrowedBooks.containsKey(person)) {
+            List<Book> borrowed = borrowedBooks.get(person);
+            Iterator<Book> iterator = borrowed.iterator();
+            while (iterator.hasNext()) {
+                Book book = iterator.next();
+                if (book.getTitle().equalsIgnoreCase(bookTitle)) {
+                    // Check if the book is being returned after the due date
+                    if (LocalDate.now().isAfter(dueDates.get(book))) {
+                        double fine = 2 * book.getPrice();
+                        System.out.println(person.getName() + " returned the book '" + bookTitle + "' after the due date.");
+                        System.out.println("Late return fine: $" + fine);
+                    }
+                    book.returnBook(); // Increment quantity in the book
+                    iterator.remove(); // Remove book from borrowed list
+                    System.out.println(person.getName() + " returned: " + bookTitle);
+                    return;
+                }
+            }
+        }
+        System.out.println("Book not found in borrowed list: " + bookTitle);
     }
 
-    public static void manageNews() {
-        System.out.println("\n=== Manage News ===");
-        System.out.println("This feature is under development.");
+    // View borrowed books
+    public void viewBorrowedBooks() {
+        System.out.println("Borrowed Books:");
+        for (Map.Entry<Person, List<Book>> entry : borrowedBooks.entrySet()) {
+            System.out.println(entry.getKey().getName() + " has borrowed:");
+            for (Book book : entry.getValue()) {
+                System.out.println(" - " + book.getTitle());
+            }
+        }
     }
 }
+
