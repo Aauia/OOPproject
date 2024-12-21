@@ -4,28 +4,24 @@ import java.util.Objects;
 
 import User.Student;
 
-public class Mark {
-    private Student student;         
-    private String courseCode;       
+public class Mark {      
     private double firstAttestation; 
     private double secondAttestation;
-    private double finalMark;        
+    private double finalMark;  
+    private String status;
 
-    public Mark(Student student, String courseCode, double firstAttestation, double secondAttestation, double finalMark) {
-        this.student = student;
-        this.courseCode = courseCode;
+    public Mark( double firstAttestation, double secondAttestation, double finalMark) {
         this.firstAttestation = firstAttestation;
         this.secondAttestation = secondAttestation;
         this.finalMark = finalMark;
+        this.status = determineStatus(finalMark); 
     }
-
-    public Student getStudent() {
-        return student;
+    
+    
+    private String determineStatus(double finalMark) {
+        return finalMark >= 50 ? "Passed" : "Failed";
     }
-
-    public String getCourseCode() {
-        return courseCode;
-    }
+    
 
     public double getFirstAttestation() {
         return firstAttestation;
@@ -39,10 +35,7 @@ public class Mark {
         return finalMark;
     }
 
-    // Utility methods
-    public String getMarkType() {
-        return "Final Mark for " + courseCode + ": " + finalMark;
-    }
+
 
     public int getSum() {
         return (int) (firstAttestation + secondAttestation + finalMark);
@@ -51,19 +44,19 @@ public class Mark {
     public void updateMark(double newFinalMark) {
         this.finalMark = newFinalMark;
     }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Mark mark = (Mark) o;
-        return Objects.equals(student, mark.student) &&
-               Objects.equals(courseCode, mark.courseCode);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(student, courseCode);
-    }
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+
+	public String getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

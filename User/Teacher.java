@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Set;
 //import javax.swing.JTable;
 import Education.*;
+import Main.Data;
 
 public class Teacher extends Employee {
 
@@ -30,10 +31,6 @@ public class Teacher extends Employee {
         this.complaints = new HashSet<>();
         this.teacherResearchers = new HashSet<>();
         this.courses = new HashSet<>();
-        
-        if (isResearcher) {
-            this.setAsResearcher(true); 
-        }
     }
 
     public void setAsResearcher(boolean isResearcher) {
@@ -47,6 +44,30 @@ public class Teacher extends Employee {
     	        this.ts = null;
     	    }
     }
+    
+    
+    public void putMark(int semester, String studentId, String courseCode, Mark mark) {
+        // Validate if the course is taught by this teacher
+        Course course = Data.INSTANCE.findCourseByCode(courseCode);
+        if (course == null || !courses.contains(course)) {
+            System.out.println("Error: Course not found or not assigned to this teacher.");
+            return;
+        }
+
+        // Find the student
+        Student student = Data.INSTANCE.findStudentById(studentId);
+        if (student == null) {
+            System.out.println("Error: Student not found for ID: " + studentId);
+            return;
+        }
+
+        // Add the mark to the student's transcript
+        Transcript transcript = student.getTranscript();
+        transcript.addMarksForCourse(semester, course, mark);
+        System.out.println("Mark added to " + student.getName() + "'s transcript for course: " + course.getCourseName());
+    }
+
+
 
     
     public TeacherTypes getDegree() {

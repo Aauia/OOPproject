@@ -1,17 +1,20 @@
 package Education;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import User.Person;
+import User.Researcher;
 
-public class ResearchProject {
+public class ResearchProject implements Serializable{
 
-    // Attributes
+	private static final long serialVersionUID = 1L;
+	// Attributes
     private String topic;
     private List<ResearchPaper> publishedPapers;
-    private List<Person> participants;
+    private List<Researcher> participants;
 
     // Constructor
     public ResearchProject(String topic) {
@@ -33,7 +36,7 @@ public class ResearchProject {
         return publishedPapers;
     }
 
-    public List<Person> getParticipants() {
+    public List<Researcher> getParticipants() {
         return participants;
     }
 
@@ -44,9 +47,9 @@ public class ResearchProject {
         }
     }
 
-    public void addParticipant(Person person) {
-        if (person != null) {
-            participants.add(person);
+    public void addParticipant(Researcher selectedParticipant) {
+        if (selectedParticipant != null) {
+            participants.add(selectedParticipant);
         }
     }
 
@@ -62,7 +65,7 @@ public class ResearchProject {
      */
     public void displayParticipants() {
         System.out.println("Participants in Project: " + topic);
-        for (Person participant : participants) {
+        for (Researcher participant : participants) {
             System.out.println(" - " + participant.getName()); 
         }
     }

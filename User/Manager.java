@@ -1,88 +1,90 @@
 package User;
 
-package OOp1;
-
+import java.util.Vector;
 import java.util.Set;
 
+import Education.Complaint;
 import Education.Course;
+import Education.Request;
+import Education.ResearchPaper;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Observable;
-
-//import javax.swing.JTable;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class Manager extends Employee implements Subject {
 
     private ManagerTypes managerType;
     private String managerId;
-    private Set<Course> courses;
 
-    public Manager(String login, String password, String name, String surname, String middleName, 
+    public Manager(String login, String password, String name, String surname, String middleName,
                    LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber, String email,
                    FamilyStatuses familyStatus, String corporateEmail, double salary, String timeOfExperience,
-                   ManagerTypes managerType, String manager,boolean isResearcher) {
+                   ManagerTypes managerType, String manager, boolean isResearcher) {
         super(login, password, name, surname, middleName, dateOfBirth, gender, nationality, phoneNumber, email,
-              familyStatus, corporateEmail, salary, timeOfExperience,isResearcher);
+              familyStatus, corporateEmail, salary, timeOfExperience, isResearcher);
         this.managerType = managerType;
-        this.managerId = managerId;
-        this.courses = new HashSet<>();
+        this.managerId = manager;
         if (isResearcher) {
             this.setAsResearcher(true);
         }
     }
 
     // Getters and setters
-   
-    // Methods
+    public ManagerTypes getManagerType() {
+        return managerType;
+    }
+
+    public void setManagerType(ManagerTypes managerType) {
+        this.managerType = managerType;
+    }
+
+    public String getManagerId() {
+        return managerId;
+    }
+
+    public void setManagerId(String managerId) {
+        this.managerId = managerId;
+    }  
+    
     public boolean approveStudentsRegistration() {
         // TODO: Implement approval logic
-        return true; // Example return value
+        return true;
     }
 
-    public ManagerTypes getManagerType() {
-		return managerType;
-	}
-
-	public void setManagerType(ManagerTypes managerType) {
-		this.managerType = managerType;
-	}
-
-	public String getManagerId() {
-		return managerId;
-	}
-
-	public void setManagerId(String managerId) {
-		this.managerId = managerId;
-	}
-
-	public Set<Course> getCourses() {
-		return courses;
-	}
-
-	public void setCourses(Set<Course> courses) {
-		this.courses = courses;
-	}
-
-	public JTable viewStudentInfo() {
-        // TODO: Implement logic to view student info
-        return new JTable(); // Example placeholder
-    }
-
-    public JTable viewRequests() {
-        // TODO: Implement logic to view requests
-        return new JTable(); // Example placeholder
-    }
-
-    public boolean approveOrNotComplaint() {
+    public boolean approveComplaint() {
         // TODO: Implement complaint approval logic
-        return true; // Example return value
+        return true;
+    }
+    public boolean disapproveComplaint() {
+        // TODO: Implement complaint approval logic
+        return true;
     }
 
 	@Override
-	public void update(Observable o, Object arg) {
+	public void subscribe(Person person) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unsubscribe(Person person) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void publish(ResearchPaper paper) {
 		// TODO Auto-generated method stub
 		
 	}
 }
 
+//	@Override
+//	public void notifySubs(String news, List<UserType> targetGroups) {
+//		// TODO Auto-generated method stub
+//		
+//	

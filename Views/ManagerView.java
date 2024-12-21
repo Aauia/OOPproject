@@ -1,9 +1,14 @@
 package Views;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
-import Main.Data;
+
 import Education.News;
+import Education.Request;
+import Main.Data;
+//import Education.News;
+import User.Student;
 
 public class ManagerView {
 
@@ -47,17 +52,17 @@ public class ManagerView {
                         showRequests();
                         break;
                     case 3:
-                        viewStudentInfo();
+                        viewStudentsInfo();
                         break;
                     case 4:
-                        publishNews();
+//                        publishNews();
                         break;
                     case 5:
                         System.out.println("Exiting the system. Goodbye!");
                         exit(); // Call exit method to clean up before exiting
                         return; // Exit the loop and terminate the program
                     case 6: 
-                    	resetNews();
+//                    	resetNews();
                     	break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
@@ -73,27 +78,64 @@ public class ManagerView {
     }
 
     // Statistics feature under development
+ // Manage statistics: Calculate and display average GPA of all students
     private static void manageStatistics() {
         System.out.println("\n=== Statistics ===");
-        System.out.println("This feature is under development.");
+        
+        List<Student> students = Data.INSTANCE.getStudents(); // Получаем всех студентов
+        if (students.isEmpty()) {
+            System.out.println("No students available to calculate statistics.");
+            return;
+        }
+        
+        double totalGPA = 0.0;
+        for (Student student : students) {
+            totalGPA += student.getGpa(); // Суммируем GPA студентов
+        }
+        double averageGPA = totalGPA / students.size(); // Рассчитываем среднее значение
+        
+        System.out.println("Total Students: " + students.size());
+        System.out.printf("Average GPA: %.2f%n", averageGPA);
     }
 
-    // Show Requests feature under development
+    // Show requests: Display list of pending requests
     private static void showRequests() {
         System.out.println("\n=== Show Requests ===");
-        System.out.println("This feature is under development.");
+
+        List<Request> requests = Data.INSTANCE.getRequests(); // Получаем список запросов
+        if (requests.isEmpty()) {
+            System.out.println("No requests to show.");
+            return;
+        }
+
+        for (int i = 0; i < requests.size(); i++) {
+            Request request = requests.get(i);
+            System.out.println((i + 1) + ") " + request);
+        }
     }
 
-    // View Student Info feature under development
-    private static void viewStudentInfo() {
+    // View student info: Display detailed information about all students
+    private static void viewStudentsInfo() {
         System.out.println("\n=== View Student Info ===");
-        System.out.println("This feature is under development.");
+
+        List<Student> students = Data.INSTANCE.getStudents(); // Получаем список студентов
+        if (students.isEmpty()) {
+            System.out.println("No students to display.");
+            return;
+        }
+
+        for (Student student : students) {
+            System.out.println("ID: " + student.getStudentId());
+            System.out.println("Name: " + student.getName());
+            System.out.println("GPA: " + student.getGpa());
+            System.out.println("Email: " + student.getEmail());
+            System.out.println("------------------------------");
+        }
     }
-    
-    private static void resetNews() {
+
+   private static void resetNews() {
         Data.INSTANCE.resetNews(); // Call reset method from Data class
-    }
-    
+    } 
     
     private static void publishNews() {
         System.out.println("\n=== Publish News ===");

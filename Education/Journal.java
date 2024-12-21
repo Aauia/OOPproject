@@ -1,14 +1,19 @@
-package Observer;
+package Education;
 
+import java.io.Serializable;
 import java.util.*;
+import User.Person;
+import User.Subject;
 
-import Education.ResearchPaper;
-
-public class Journal {
-    private String name;
-    private List<ResearchPaper> papers;  // List of all papers published in the journal
-    private Set<User> subscribers;  // Set of subscribed users
-    private Map<User, Set<String>> unreadNotifications;  // User -> Set of unread paper titles
+public class Journal implements Serializable, Subject {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String name;
+    private List<ResearchPaper> papers;
+    private Set<Person> subscribers;
+    private Map<Person, Set<String>> unreadNotifications;
 
     public Journal(String name) {
         this.name = name;
@@ -17,50 +22,46 @@ public class Journal {
         this.unreadNotifications = new HashMap<>();
     }
 
-    // Subscribe a user to the journal
-    public void subscribe(User user) {
-        subscribers.add(user);
-        unreadNotifications.put(user, new HashSet<>());  // Initialize unread notifications for the user
-        System.out.println(user.getName() + " subscribed to journal: " + name);
+    public void subscribe(Person person) {
+        subscribers.add(person);
+        unreadNotifications.putIfAbsent(person, new HashSet<>());
+        System.out.println(person.getName() + " has subscribed to " + name);
+    }
+    
+    public void unsubscribe(Person person) {
+        subscribers.remove(person);
+        unreadNotifications.remove(person);
+        System.out.println(person.getName() + " has unsubscribed from " + name);
     }
 
-    // Unsubscribe a user from the journal
-    public void unsubscribe(User user) {
-        subscribers.remove(user);
-        unreadNotifications.remove(user);  // Remove the user's unread notifications when unsubscribed
-        System.out.println(user.getName() + " unsubscribed from journal: " + name);
+    public boolean isSubscribed(Person person) {
+        return subscribers.contains(person);
     }
 
-    // Publish a new paper and notify subscribed users
     public void publish(ResearchPaper paper) {
-        papers.add(paper);  // Add the paper to the journal's collection
-        System.out.println("Paper \"" + paper.getTitle() + "\" added to journal: " + name);
+        papers.add(paper);
+        for (Person person : subscribers) {
+            unreadNotifications.get(person).add(paper.getTitle());
+        }
+        System.out.println("Paper \"" + paper.getTitle() + "\" published in " + name);
+    }
 
-        // Notify subscribed users about the new paper by adding it to their unread notifications
-        for (User user : subscribers) {
-            unreadNotifications.get(user).add(paper.getTitle());  // Add paper title to unread list
+    // New method: Mark all papers as viewed for a specific person
+    public void markAllPapersAsViewed(Person person) {
+        if (unreadNotifications.containsKey(person)) {
+            unreadNotifications.get(person).clear();
         }
     }
 
-    // Getter methods
-    public String getName() { return name; }
-    public List<ResearchPaper> getPapers() { return papers; }
-
-    // Check if user is subscribed to the journal
-    public boolean isSubscribed(User user) {
-        return subscribers.contains(user);
+    public Set<String> getUnreadNotifications(Person person) {
+        return unreadNotifications.getOrDefault(person, new HashSet<>());
     }
 
-    // Retrieve unread notifications for a user
-    public Set<String> getUnreadNotifications(User user) {
-        return unreadNotifications.getOrDefault(user, new HashSet<>());
+    public List<ResearchPaper> getPapers() {
+        return papers;
     }
 
-    // Mark a paper as viewed by removing it from unread notifications
-    public void markPaperAsViewed(User user, String paperTitle) {
-        Set<String> unreadPapers = unreadNotifications.get(user);
-        if (unreadPapers != null) {
-            unreadPapers.remove(paperTitle);  // Remove the paper from unread notifications
-        }
+    public String getName() {
+        return name;
     }
 }

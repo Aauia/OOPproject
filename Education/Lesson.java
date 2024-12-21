@@ -1,59 +1,47 @@
 package Education;
 
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import User.Student;
-import User.Teacher;
-
-import java.util.Map;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.HashMap;
 
-public class Lesson {
+public class Lesson implements Serializable{
 
-    private Teacher teacher;
-    private SortedSet<Student> students;
-    private int lessonID;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String teacher;
+    private String lessonID;
     private Course course;
-    private LessonType lessonType; // Enum for lesson types (e.g., Lecture, Practice)
-    private Map<Student, MarkType> marks;
+    private LessonType lessonType;
+    private int room;
+    private String time; // Format: "10:00 AM - 12:00 PM"
+    private String day;  // Format: "Monday"
 
     // Constructor
-    public Lesson(int lessonID, Teacher teacher, Course course, LessonType lessonType) {
+    public Lesson(String lessonID, String teacher, Course course, LessonType lessonType, int room, String time, String day) {
         this.lessonID = lessonID;
         this.teacher = teacher;
         this.course = course;
         this.lessonType = lessonType;
-        this.students = new TreeSet<>();
-        this.marks = new HashMap<>();
+        this.room = room;
+        this.time = time;
+        this.day = day;
     }
 
     // Getters and Setters
-    public Teacher getTeacher() {
+    public String getTeacher() {
         return teacher;
     }
 
-    public void setTeacher(Teacher teacher) {
+    public void setTeacher(String teacher) {
         this.teacher = teacher;
     }
 
-    public Set<Student> getStudents() {
-        return students;
-    }
-
-    public void addStudent(Student student) {
-        if (student != null) {
-            students.add(student);
-        }
-    }
-
-    public int getLessonID() {
+    public String getLessonID() {
         return lessonID;
     }
 
-    public void setLessonID(int lessonID) {
+    public void setLessonID(String lessonID) {
         this.lessonID = lessonID;
     }
 
@@ -73,29 +61,53 @@ public class Lesson {
         this.lessonType = lessonType;
     }
 
-    public Map<Student, MarkType> getMarks() {
-        return marks;
+    public int getRoom() {
+        return room;
     }
 
-    public void addMark(Student student, MarkType mark) {
-        if (student != null && mark != null) {
-            marks.put(student, mark);
-        }
+    public void setRoom(int room) {
+        this.room = room;
     }
 
-    // Operations
-    public String getCourseCode() {
-        return course != null ? course.getCourseCode() : "N/A";
+    public String getTime() {
+        return time;
     }
 
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
+    // Display Lesson Information
     public void displayLessonInfo() {
         System.out.println("Lesson ID: " + lessonID);
-        System.out.println("Course: " + getCourseCode());
-        System.out.println("Teacher: " + (teacher != null ? teacher.getTeacherID() : "No teacher assigned"));
+        System.out.println("Course: " + (course != null ? course.getCourseCode() : "N/A"));
         System.out.println("Lesson Type: " + lessonType);
-        System.out.println("Number of Students: " + students.size());
+        System.out.println("Room: " + room);
+        System.out.println("Time: " + time);
+        System.out.println("Day: " + day);
     }
-    
+
+    @Override
+    public String toString() {
+        return "Lesson{" +
+                "lessonID='" + lessonID + '\'' +
+                ", teacher='" + teacher + '\'' +
+                ", course=" + (course != null ? course.getCourseCode() : "N/A") +
+                ", lessonType=" + lessonType +
+                ", room=" + room +
+                ", time='" + time + '\'' +
+                ", day='" + day + '\'' +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,3 +121,5 @@ public class Lesson {
         return Objects.hash(lessonID);
     }
 }
+
+

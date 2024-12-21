@@ -4,9 +4,7 @@ import java.util.SortedSet;
 
 import java.util.TreeSet;
 import java.util.Vector;
-
-import User.Student;
-import User.Teacher;
+import User.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,35 +12,44 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.io.Serializable;
+
+import java.util.*;
+import java.io.Serializable;
+
+
 public class Course implements Serializable {
+	private static final long serialVersionUID = 1L;
     private String courseCode;
     private String courseName;
-    private Access_Course type; 
-    private SortedSet<Student> students;
-    private SortedSet<Teacher> teachers; 
+    private Access_Course type;
     private Integer credit;
-    private Map<Integer, Integer> studentAmount;
-    private List<Lesson> lessons;
-    private List<Major> accessMajor; 
-    private Map<String, Vector<Map<String, String>>> teacherSchedule;
-    private Integer prerequisiteCourseCode;
+    private Integer  studentAmount;
+    private Vector<String> prerequisiteCourses; 
+    private Vector<Faculties> sharedFaculties;
 
     // Constructor
-    public Course(String courseCode, String courseName, Access_Course type, int credit) {
+    public Course(String courseCode, String courseName, Access_Course type, int credit, 
+    		Integer  studentAmount,  
+                  Vector<String> prerequisiteCourses, Vector<Faculties> sharedFaculties) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.type = type;
         this.credit = credit;
-        this.students = new TreeSet<>();
-        this.teachers = new TreeSet<>();
-        this.studentAmount = new HashMap<>();
-        this.lessons = new ArrayList<>();
-        this.accessMajor = new ArrayList<>();
-        this.teacherSchedule = new HashMap<>();
+        this.studentAmount = studentAmount ;
+        this.prerequisiteCourses = prerequisiteCourses != null ? prerequisiteCourses : new Vector<>();
+        
+        // Initialize sharedFaculties if the type is SHARED
+        if (type == Access_Course.SHARED) {
+            this.sharedFaculties = sharedFaculties != null ? sharedFaculties : new Vector<>();
+        } else {
+            this.sharedFaculties = null;
+        }
     }
+
+
     public Course(String courseName) {
-        super();  // Call the parent constructor, if needed.
-        this.setCourseName(courseName); // Or assign the name appropriately.
+        super();
+        this.setCourseName(courseName);
     }
 
     // Getters and Setters
@@ -68,24 +75,14 @@ public class Course implements Serializable {
 
     public void setType(Access_Course type) {
         this.type = type;
-    }
 
-    public SortedSet<Student> getStudents() {
-        return students;
+        // Initialize sharedFaculties if type is set to SHARED
+        if (type == Access_Course.SHARED && this.sharedFaculties == null) {
+            this.sharedFaculties = new Vector<>();
+        } else if (type != Access_Course.SHARED) {
+            this.sharedFaculties = null; // Clear sharedFaculties if not SHARED
+        }
     }
-
-    public void setStudents(SortedSet<Student> students) {
-        this.students = students;
-    }
-
-    public SortedSet<Teacher> getTeachers() {
-        return teachers;
-    }
-
-    public void setTeachers(SortedSet<Teacher> teachers) {
-        this.teachers = teachers;
-    }
-
 
     public Integer getCredit() {
         return credit;
@@ -95,59 +92,52 @@ public class Course implements Serializable {
         this.credit = credit;
     }
 
-    public Map<Integer, Integer> getStudentAmount() {
+    public Integer getStudentAmount() {
         return studentAmount;
     }
 
-    public void setStudentAmount(Map<Integer, Integer> studentAmount) {
+    public void setStudentAmount(Integer studentAmount) {
         this.studentAmount = studentAmount;
     }
 
-    public List<Lesson> getLessons() {
-        return lessons;
+
+    public Vector<String> getPrerequisiteCourses() {
+        return prerequisiteCourses;
     }
 
-    public void setLessons(List<Lesson> lessons) {
-        this.lessons = lessons;
+    public void setPrerequisiteCourses(Vector<String> prerequisiteCourses) {
+        this.prerequisiteCourses = prerequisiteCourses;
     }
 
-    public List<Major> getAccessMajor() {
-        return accessMajor;
+    public void addPrerequisiteCourse(String course) {
+        this.prerequisiteCourses.add(course);
     }
 
-    public void setAccessMajor(List<Major> accessMajor) {
-        this.accessMajor = accessMajor;
+    public void removePrerequisiteCourse(Course course) {
+        this.prerequisiteCourses.remove(course);
     }
 
-    public Map<String, Vector<Map<String, String>>> getTeacherSchedule() {
-        return teacherSchedule;
+    public Vector<Faculties> getSharedFaculties() {
+        return sharedFaculties;
     }
 
-    public void setTeacherSchedule(Map<String, Vector<Map<String, String>>> teacherSchedule) {
-        this.teacherSchedule = teacherSchedule;
+    public void addSharedFaculty(Faculties faculty) {
+        if (this.type == Access_Course.SHARED && sharedFaculties != null) {
+            sharedFaculties.add(faculty);
+        } else {
+            throw new UnsupportedOperationException("Cannot add faculties to a non-SHARED course.");
+        }
     }
 
-    public Integer getPrerequisiteCourseCode() {
-        return prerequisiteCourseCode;
-    }
-
-    public void setPrerequisiteCourseCode(Integer prerequisiteCourseCode) {
-        this.prerequisiteCourseCode = prerequisiteCourseCode;
+    public void removeSharedFaculty(Faculties faculty) {
+        if (this.type == Access_Course.SHARED && sharedFaculties != null) {
+            sharedFaculties.remove(faculty);
+        } else {
+            throw new UnsupportedOperationException("Cannot remove faculties from a non-SHARED course.");
+        }
     }
 
     // Operations
-    public void addStudent(Student student) {
-        this.students.add(student);
-    }
-
-    public void removeStudent(Student student) {
-        this.students.remove(student);
-    }
-
-    public void addTeacher(Teacher teacher) {
-        this.teachers.add(teacher);
-    }
-
     public void declineCourse() {
         System.out.println("Course " + courseName + " has been declined.");
     }
@@ -159,9 +149,10 @@ public class Course implements Serializable {
                 ", courseName='" + courseName + '\'' +
                 ", type=" + type +
                 ", credit=" + credit +
+                (sharedFaculties != null ? ", sharedFaculties=" + sharedFaculties : "") +
                 '}';
     }
-    
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -175,3 +166,4 @@ public class Course implements Serializable {
         return Objects.hash(courseCode);
     }
 }
+

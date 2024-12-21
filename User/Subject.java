@@ -1,7 +1,10 @@
 package User;
 
-import java.util.List;
+import Education.ResearchPaper;
 
 public interface Subject {
-    void notifySubs(String news, List<UserType> targetGroups);
+
+    void subscribe(Person person);
+    void unsubscribe(Person person);
+    void publish(ResearchPaper paper);
 }

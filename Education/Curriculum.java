@@ -1,65 +1,54 @@
 package Education;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Curriculum implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String majorName;
+    private Specialties specialty;
     private Faculties faculty;
-    private Map<Integer, List<Course>> semesterCourses; // Semester mapped to courses
+    private Map<Integer, List<Course>> semesterCourses; // Map semester to list of courses
 
-    // Constructor
-    public Curriculum(String majorName, Faculties faculty, Map<Integer, List<Course>> semesterCourses) {
-        this.majorName = majorName;
+    public Curriculum(Specialties specialty, Faculties faculty, Map<Integer, List<Course>> semesterCourses) {
+        this.specialty = specialty;
         this.faculty = faculty;
         this.semesterCourses = semesterCourses;
     }
 
-    // Getters
-    public String getMajorName() {
-        return majorName;
+    public Specialties getSpecialty() {
+        return specialty;
+    }
+
+    public void setSpecialty(Specialties specialty) {
+        this.specialty = specialty;
     }
 
     public Faculties getFaculty() {
         return faculty;
     }
 
-    public Map<Integer, List<Course>> getSemesterCourses() {
-        return semesterCourses;
-    }
-
-    public List<Course> getCoursesForSemester(int semester) {
-        return semesterCourses.getOrDefault(semester, List.of());
-    }
-
-    // Setters
-    public void setMajorName(String majorName) {
-        this.majorName = majorName;
-    }
-
     public void setFaculty(Faculties faculty) {
         this.faculty = faculty;
+    }
+
+    public Map<Integer, List<Course>> getSemesterCourses() {
+        return semesterCourses;
     }
 
     public void setSemesterCourses(Map<Integer, List<Course>> semesterCourses) {
         this.semesterCourses = semesterCourses;
     }
 
-    // Add a course to a specific semester
-    public void addCourseToSemester(int semester, Course course) {
-        semesterCourses.computeIfAbsent(semester, k -> new ArrayList<>()).add(course);
-    }
-
     @Override
     public String toString() {
         return "Curriculum{" +
-                "majorName='" + majorName + '\'' +
+                "specialty=" + specialty +
                 ", faculty=" + faculty +
                 ", semesterCourses=" + semesterCourses +
                 '}';
     }
 }
+
+

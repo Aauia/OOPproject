@@ -17,14 +17,4 @@ public class Admin extends Employee {
         }
     }
 
-
-    // Methods
-    public List<String> viewLogFiles() {
-       
-    }
-
-	@Override
-	public void update(Observable o, Object arg) {
-		
-	}
 }

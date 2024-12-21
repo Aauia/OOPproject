@@ -1,48 +1,62 @@
 package Education;
 
+import java.io.Serializable;
 import java.util.*;
 
-import User.Student;
+public class Transcript implements Serializable {
+    private String studentId;
+    private Map<Integer, Map<Course, ArrayList<Mark>>> semesterData; // Nested map to store marks by semester and course
+    private Set<Course> registeredCourses;
 
-public class Transcript {
-    private Student student;                                           
-    private int semester;                                              
-    private Map<Course, ArrayList<Mark>> studentMarks;                 
-
-    public Transcript(Student student, int semester) {
-        this.student = student;
-        this.semester = semester;
-        this.studentMarks = new HashMap<>();
+    public Transcript(String studentId) {
+        this.studentId = studentId;
+        this.semesterData = new HashMap<>();
+        this.registeredCourses = new HashSet<>();
     }
 
-    public Student getStudent() {
-        return student;
+    public void addMarksForCourse(int semester, Course course, Mark mark) {
+        // Initialize semester and course data if missing
+        semesterData.computeIfAbsent(semester, k -> new HashMap<>())
+                    .computeIfAbsent(course, k -> new ArrayList<>())
+                    .add(mark);
     }
 
-    public int getSemester() {
-        return semester;
+    public List<Mark> getMarksForCourse(int semester, Course course) {
+        return semesterData.getOrDefault(semester, Collections.emptyMap())
+                           .getOrDefault(course, new ArrayList<>());
     }
 
-    public void addMarksForCourse(Course course, Mark mark) {
-       //
+    public boolean hasPassedCourse(String courseCode) {
+        for (Map<Course, ArrayList<Mark>> semesterCourses : semesterData.values()) {
+            for (Course course : semesterCourses.keySet()) {
+                if (course.getCourseCode().equals(courseCode)) {
+                    for (Mark mark : semesterCourses.get(course)) {
+                        if (mark.getSum() >= 50) return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
-    public void viewStudentMarks() {
-        //
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Transcript that = (Transcript) o;
-        return Objects.equals(student, that.student) &&
-               Objects.equals(semester, that.semester);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(student, semester);
+    public void displayTranscript() {
+        System.out.println("Transcript for Student ID: " + studentId);
+        for (Map.Entry<Integer, Map<Course, ArrayList<Mark>>> semesterEntry : semesterData.entrySet()) {
+            int semester = semesterEntry.getKey();
+            System.out.println("Semester: " + semester);
+            for (Map.Entry<Course, ArrayList<Mark>> courseEntry : semesterEntry.getValue().entrySet()) {
+                Course course = courseEntry.getKey();
+                List<Mark> marks = courseEntry.getValue();
+                System.out.println("  Course: " + course);
+                for (Mark mark : marks) {
+                    System.out.println("    - Marks: " + mark.getSum() + " | Status: " + mark.getStatus());
+                }
+            }
+        }
     }
 
+	public Map<Integer, Map<Course, ArrayList<Mark>>> getSemesterData() {
+		return semesterData;
+	}
 }
+

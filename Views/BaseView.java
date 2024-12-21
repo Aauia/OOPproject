@@ -3,79 +3,340 @@ package Views;
 import java.io.IOException;
 import java.util.Scanner;
 import java.util.Vector;
-import Main.*;
+
+import Main.Data;
+import Main.UserSession;
 import User.*;
 import Education.*;
 
 public class BaseView {
-    private static final Scanner scanner = new Scanner(System.in); // Single Scanner instance
+    private final String login;
+    private final String password;
+    private Person user; // Declare the user object
 
-    private static void save() throws IOException {
-        Data.write();
-    }
+    // Constructor
+    public BaseView(String login, String password) throws IOException {
+        this.login = login;
+        this.password = password;
 
-    private void exit() {
-        System.out.println("Bye bye");
-        try {
-            save();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void run(Person loggedInUser) throws IOException {
-        System.out.println("Welcome, " + loggedInUser.getName());
-        BaseView baseView = new BaseView();
-
-        try {
-            while (true) {
-                System.out.println("\n=== University Management System ===");
-                System.out.println("1. Manage Researchers");
-                System.out.println("2. Manage Journals");
-                System.out.println("3. News");
-                System.out.println("4. Library");
-                System.out.println("5. Exit");
-                System.out.print("Enter your choice: ");
-
-                if (!scanner.hasNextInt()) {
-                    System.out.println("Invalid input. Please enter a number.");
-                    scanner.nextLine();
-                    continue;
-                }
-
-                int choice = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (choice) {
-                    case 1:
-                        manageResearchers();
-                        break;
-                    case 2:
-                        manageJournals();
-                        break;
-                    case 3:
-                        viewNews();
-                        break;
-                    case 4:
-                        libraryMenu(loggedInUser);
-                        break;
-                    case 5:
-                        System.out.println("Exiting the system. Goodbye!");
-                        baseView.exit();
-                        return;
-                    default:
-                        System.out.println("Invalid choice. Please try again.");
-                }
+        // Authenticate user and show the respective view
+        this.user = Data.findUserByLoginAndPassword(login, password);
+        if (user != null) {
+            if (user instanceof Admin) {
+                showAdmin(user);
+            } else if (user instanceof Student) {
+                showStudent(user);
             }
-        } catch (Exception e) {
-            System.out.println("Something bad happened... \nSaving resources...");
-            e.printStackTrace();
-            save();
+               else if (user instanceof Teacher) {
+                    showTeacher(user);
+               } 
+               else if (user instanceof Librarian) {
+                   try {
+					showLibrarian(user);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+               }
+               else if (user instanceof Dean) {
+            	   showDean(user);
+               }
+                
+            } 
+         else {
+            System.out.println("Invalid login or password.");
         }
     }
 
+    // Getter for user
+    public Person getUser() {
+        return user;
+    }
+
+    // Create instances of AdminView and StudentView
+    private static final AdminView adminView1 = new AdminView(); // Corrected to AdminView
+    private static final StudentView studentView = new StudentView();
+    private static final TeacherView teacherView = new TeacherView();
+    private static final LibrarianView librarianView = new LibrarianView();
+    private static final DeanView deanView = new DeanView();
+    private static final ResearcherView researcherView = new ResearcherView();
+
+    // Base menu for common options
+    public static void showBaseMenu() {
+        System.out.println("1. Manage Researchers");
+        System.out.println("2. Manage Journals");
+        System.out.println("3. Manage News");
+        System.out.println("4. Manage Books");
+        
+    }
+
+    // Show Admin menu
+    public void showAdmin(Person user) {
+        showBaseMenu(); // Common options
+        System.out.println("5. Manage Students");
+        System.out.println("6. Exit");
+        handleAdminChoice();
+    }
+
+    // Show Student menu
+    public void showStudent(Person user) {
+        showBaseMenu(); // Common options
+        System.out.println("5. View Courses");
+        System.out.println("6. Exit");
+        handleStudentChoice();
+    }
+
+    // Show Teacher menu
+    public void showTeacher(Person user) {
+        showBaseMenu(); // Common options
+        System.out.println("5. Manage Classes");
+        System.out.println("6. Exit");
+        handleTeacherChoice();
+    }
+    public static void showLibrarian(Person user) throws IOException {
+        showBaseMenu();
+        System.out.println("5. Librarian Menu");
+        System.out.println("6. Exit");
+        handleLibrarianChoice(user);
+    }
+    public static void showDean(Person user) throws IOException {
+        showBaseMenu();
+        System.out.println("5. Dean Menu");
+        System.out.println("6. Exit");
+        handleDeanChoice(user);
+    }
+    private static final Scanner scanner = new Scanner(System.in);
+      
+    // Admin choice handler
+    private void handleAdminChoice() {
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+            	 if (UserSession.getInstance().isResearcher()) {
+            		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
+                 } else {
+                     System.out.println("Access denied. You are not a researcher.");
+                 }
+                 break;
+            case 2:
+                System.out.println("Managing Journals (Admin)");
+                break;
+            case 3:
+                System.out.println("Managing News (Admin)");
+                break;
+            case 4 : 
+            	libraryMenu(user);
+			try {
+				showLibrarian(user);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            	break;
+            	
+            case 5:
+                try {
+                    adminView1.run(); // Call AdminView's run method
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 6:
+                System.out.println("Exiting Admin Menu...");
+                break;
+            default:
+                System.out.println("Invalid choice. Try again.");
+                showAdmin(user);
+        }
+    }
+
+    // Student choice handler
+    private void handleStudentChoice() {
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+            	 if (UserSession.getInstance().isResearcher()) {
+            		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
+                 } else {
+                     System.out.println("Access denied. You are not a researcher.");
+                 }
+            case 2:
+                System.out.println("Managing Journals (Student)");
+                break;
+            case 3:
+                System.out.println("Managing News (Student)");
+                break;
+            case 4 : 
+            	libraryMenu(user);
+			try {
+				showLibrarian(user);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            	break;
+            case 5:
+                System.out.println("Manage courses");
+                try {
+                    studentView.menu((Student) user); // Pass the correct object here
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 6:
+                System.out.println("Exiting Student Menu...");
+                break;
+            default:
+                System.out.println("Invalid choice. Try again.");
+                showStudent(user);
+        }
+    }
+
+    // Teacher choice handler
+    private void handleTeacherChoice() {
+
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+            	 if (UserSession.getInstance().isResearcher()) {
+            		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
+                 } else {
+                     System.out.println("Access denied. You are not a researcher.");
+                 }
+            case 2:
+                System.out.println("Managing Journals (Teacher)");
+                break;
+            case 3:
+                System.out.println("Managing News (Teacher)");
+                break;
+            case 4 : 
+            	libraryMenu(user);
+			try {
+				showLibrarian(user);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            	break;
+            case 5:
+                System.out.println("Managing Classes");
+                try {
+                	teacherView.menu((Teacher) user); // Pass the correct object here
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                
+                break;
+            case 6:
+                System.out.println("Exiting Teacher Menu...");
+                break;
+            default:
+                System.out.println("Invalid choice. Try again.");
+                showTeacher(user);
+        }
+    }
+
+
+    private static void handleLibrarianChoice(Person user) throws IOException {
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+            	 if (UserSession.getInstance().isResearcher()) {
+            		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
+                 } else {
+                     System.out.println("Access denied. You are not a researcher.");
+                 }
+            case 2:
+            	System.out.println("Managing Journals (Librarian)");
+            	break;
+            case 3:
+            	viewNews();
+            	break;
+            case 4:
+            	libraryMenu(user);
+            	showLibrarian(user);
+            	break;
+            case 5:
+			try {
+				try {
+					librarianView.run();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            case 6:
+            	exitMenu();
+            	break;
+            default:
+            	invalidChoice(() -> {
+					try {
+						showLibrarian(user);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+        }
+    }
+    private static void handleDeanChoice(Person user) throws IOException {
+        int choice = scanner.nextInt();
+
+        switch (choice) {
+            case 1:
+            	 if (UserSession.getInstance().isResearcher()) {
+            		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
+                 } else {
+                     System.out.println("Access denied. You are not a researcher.");
+                 }
+            case 2:
+            	System.out.println("Managing Journals (Librarian)");
+            	break;
+            case 3:
+            	viewNews();
+            	break;
+            case 4:
+            	libraryMenu(user);
+            	break;
+            case 5:
+			try {
+				try {
+					deanView.run();
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            default:
+            	invalidChoice(() -> {
+					try {
+						showLibrarian(user);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				});
+        }
+        }
+    
+    private static void viewNews() {
+        System.out.println("Displaying News...");
+        Data.INSTANCE.getNewsList().forEach(System.out::println);
+    }
 
     private static void libraryMenu(Person loggedInPerson) {
+        System.out.println("Library Menu...");
+        // Call library-related functionality
         boolean exitLibraryMenu = false;
 
         while (!exitLibraryMenu) {
@@ -125,7 +386,6 @@ public class BaseView {
             }
         }
     }
-
     private static void viewLibrary() {
         System.out.println("\n=== Library Books ===");
         Vector<Book> books = Data.INSTANCE.getBooks();
@@ -152,13 +412,13 @@ public class BaseView {
         
     }
 
-    private static void borrowBook(Person loggedInPerson) { 
+    private static void borrowBook(Person user) { 
         System.out.print("Enter the title of the book you want to borrow: ");
         String bookTitle = scanner.nextLine();
 
         Book book = findBook(bookTitle);
         if (book != null && book.getQuantity() > 0) {
-        	loggedInPerson.borrowBook(book);
+        	user.borrowBook(book);
             book.borrow();
 
             System.out.println("You have successfully borrowed the book: " + book.getTitle());
@@ -206,26 +466,23 @@ public class BaseView {
         return null;
     }
 
-    public static void manageResearchers() {
-        System.out.println("\n=== Manage Researchers ===");
-        System.out.println("This feature is under development.");
-    }
 
-    public static void manageJournals() {
-        System.out.println("\n=== Manage Journals ===");
-        System.out.println("This feature is under development.");
-    }
-
-    public static void viewNews() {
-        System.out.println("\n=== News ===");
-        Vector<News> newsList = Data.INSTANCE.getNewsList();
-
-        if (newsList.isEmpty()) {
-            System.out.println("No news available.");
-        } else {
-            for (News news : newsList) {
-                System.out.println(news.toString());
-            }
+    private static int getUserChoice() {
+        System.out.print("Enter your choice: ");
+        while (!scanner.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number.");
+            scanner.next();
         }
+        return scanner.nextInt();
     }
+
+    private static void invalidChoice(Runnable retryMenu) {
+        System.out.println("Invalid choice. Try again.");
+        retryMenu.run();
+    }
+    private static void exitMenu() {
+        System.out.println("Exiting... Goodbye!");
+    }
+    
 }
+

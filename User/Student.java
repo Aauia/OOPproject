@@ -1,10 +1,8 @@
 package User;
 import java.util.HashMap;
-import Education.Transcript;
-
-
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Set;
 //import javax.swing.JTable;
@@ -14,21 +12,25 @@ public class Student extends Person  {
     private StudentOrganization studentLife;
     private List<Major> majors;
     private List<Request> requests;
-    private Faculty faculty;
+    private Faculties faculty;
     private String studentId;
     public StudentResearcher sr;
     private Set<Complaint> complaints;
     private Schedule schedule;
     private Transcript transcript;
     private Set<StudentOrganization> studentOrganizations;
+    private int semester;
+    private Specialties specialty;
+    private boolean isResearcher;
 
     public Student(String login, String password, String name, String surname, String middleName,
             LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber,
             String email, FamilyStatuses familyStatus, String corporateEmail,
             double gpa, StudentOrganization studentLife, List<Major> majors,
-            List<Request> requests, Faculty faculty, String studentId,
-            Set<Complaint> complaints, Set<StudentOrganization> studentOrganizations,
-            HashMap<Course,Mark> courses, boolean isResearcher) {
+            List<Request> requests, Faculties faculty, String studentId,
+            Set<Complaint> complaints, HashMap<Course, Mark> courses, 
+            boolean isResearcher,Schedule schedule, int semester, Specialties specialty,  Transcript transcript)
+ {
 			 super(login, password, name, surname, middleName, dateOfBirth, gender, nationality,
 			       phoneNumber, email, familyStatus, corporateEmail);
 			 this.gpa = gpa;
@@ -38,26 +40,31 @@ public class Student extends Person  {
 			 this.faculty = faculty;
 			 this.studentId = studentId;
 			 this.complaints = complaints;
-			 this.studentOrganizations = studentOrganizations;			 
+			 this.schedule = schedule;
 			 if (isResearcher) {
 		            this.setAsResearcher(true);
 		        }
+			 this.semester = semester;
+			 this.specialty = specialty;
+			 this.transcript = transcript;
 }
     public Student(String name) {
         super();  // Call the parent constructor, if needed.
         this.setName(name); // Or assign the name appropriately.
     }
      
-    public Student() {
-        super();
-    }
-    public void setAsResearcher(boolean isResearcher) {
+
+	public void setAsResearcher(boolean isResearcher) {
         if (isResearcher) {
             this.sr = new StudentResearcher(this,sr); 
+            this.isResearcher=isResearcher;
         } else {
             this.sr = null; 
         }
     }
+	 public boolean isResearcher() {
+	    	return this.isResearcher;
+	    }
 
     public double getGpa() {
         return gpa;
@@ -82,6 +89,19 @@ public class Student extends Person  {
     public void setMajors(List<Major> majors) {
         this.majors = majors;
     }
+    public int getSemester() {
+        return semester;
+    }
+    public void  setSemester(int semester) {
+        this.semester = semester;
+    }
+
+    public Specialties getSpecialty() {
+        return specialty;
+    }
+    public void setSpecialty(Specialties specialty) {
+        this.specialty = specialty;
+    }
 
     public List<Request> getRequests() {
         return requests;
@@ -91,13 +111,6 @@ public class Student extends Person  {
         this.requests = requests;
     }
 
-    public Faculty getFaculty() {
-        return faculty;
-    }
-
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
-    }
 
     public String getStudentId() {
         return studentId;
@@ -150,6 +163,9 @@ public class Student extends Person  {
         // Placeholder for fetching teacher information
         return "Teacher information not available.";
     }
+    public void viewTranscript() {
+        transcript.displayTranscript();
+    }
     public Schedule getSchedule() {
         return schedule;
     }
@@ -173,5 +189,22 @@ public class Student extends Person  {
 		// TODO Auto-generated method stub
 		
 	}
+	public Faculties getFaculty() {
+		// TODO Auto-generated method stub
+		return faculty;
+	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Student student= (Student) o;
+        return Objects.equals(studentId, student.studentId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentId);
+    }
 }
   
+

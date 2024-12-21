@@ -2,9 +2,12 @@ package User;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Observer;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class Person implements Serializable,Observer {
+import Education.*;
+
+public abstract class Person implements Serializable, Observer {
     
 	private static final long serialVersionUID = 1L;
 	private String login;
@@ -19,6 +22,7 @@ public abstract class Person implements Serializable,Observer {
     private String email;
     private FamilyStatuses familyStatus;
     private String corporateEmail;
+    private Map<Book, LocalDate> borrowedBooks;
     
     public Person(String login, String password, String name, String surname, String middleName,
             LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber,
@@ -35,10 +39,12 @@ public abstract class Person implements Serializable,Observer {
     this.email = email;
     this.familyStatus = familyStatus;
     this.corporateEmail = corporateEmail;
+    this.borrowedBooks = new HashMap<>();
     }
     
     public Person() {
-	}
+    	this.borrowedBooks = new HashMap<>();
+    	}
 
 	public String getLogin() {
     	return login;
@@ -132,6 +138,39 @@ public abstract class Person implements Serializable,Observer {
         this.corporateEmail = corporateEmail;
     }
     
+    public Map<Book, LocalDate> getBorrowedBooks() {
+        return borrowedBooks;
+    }
+
+    // Borrow a book
+    public void borrowBook(Book book) {
+    	 if (this.borrowedBooks == null) {
+    	        this.borrowedBooks = new HashMap<>(); // Initialize if null
+    	    }
+    	 if (book.getQuantity() > 0) {
+    	        borrowedBooks.put(book, LocalDate.now().plusMonths(6)); // Set due date 6 months later
+    	    } else {
+    	        System.out.println("Sorry, the book is out of stock.");
+    	    }
+    	 }
+
+    public void returnBook(Book book) {
+        borrowedBooks.remove(book);
+    }
+    public void resetBorrowedBooks() {
+        borrowedBooks.clear();  // Clears the borrowed books list/map
+    }
+
+    public void viewBorrowedBooks() {
+        if (borrowedBooks.isEmpty()) {
+            System.out.println(name + " has not borrowed any books.");
+        } else {
+            System.out.println("My Borrowed Books:");
+            for (Map.Entry<Book, LocalDate> entry : borrowedBooks.entrySet()) {
+                System.out.println(" - " + entry.getKey().getTitle() + " (Due: " + entry.getValue() + ")");
+            }
+        }
+    }
     
     public boolean login(String password) {
         return this.password.equals(password);
@@ -147,11 +186,11 @@ public abstract class Person implements Serializable,Observer {
 				+ ", phoneNumber=" + phoneNumber + ", email=" + email + ", familyStatus=" + familyStatus
 				+ ", corporateEmail=" + corporateEmail + "]";
 	}
-
-
 	
-	
-	
-    
+	@Override
+	public void update(ResearchPaper paper) {
+		// TODO Auto-generated method stub
+		
+	}
     
 }

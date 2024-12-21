@@ -1,12 +1,14 @@
 package User;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import Education.*;
 
-public class Researcher implements Researchable {
-    private ArrayList<ResearchPaper> researchPapers;
+public class Researcher implements Researchable,Serializable {
+	private static final long serialVersionUID = 1L;
+	private ArrayList<ResearchPaper> researchPapers;
     private ArrayList<ResearchProject> researchProjects;
 
     public Researcher() {
@@ -30,23 +32,6 @@ public class Researcher implements Researchable {
         }
     }
 
-    @Override
-    public int calculateHIndex() {
-        Collections.sort(researchPapers, Comparator.comparingInt(paper -> Integer.parseInt(((ResearchPaper) paper).getCitation())).reversed());
-        int hIndex = 0;
-        for (int i = 0; i < researchPapers.size(); i++) {
-            ResearchPaper paper = researchPapers.get(i);
-            double citationCount = Integer.parseInt(paper.getCitation());
-            if (citationCount >= i + 1) {
-                hIndex = i + 1;
-            } else {
-                break;
-            }
-        }
-        return hIndex;
-    }
-
-
     public ArrayList<ResearchPaper> getResearchPapers() {
         return researchPapers;
     }
@@ -60,5 +45,16 @@ public class Researcher implements Researchable {
             System.out.println(project);
         }
     }
-}
 
+	public int getName() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int calculateHIndex() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+}

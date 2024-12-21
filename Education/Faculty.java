@@ -1,6 +1,7 @@
 package Education;
 import java.util.Set;
 
+
 import User.Student;
 
 import java.util.HashSet;
@@ -9,6 +10,7 @@ import java.util.Objects;
 
 import java.io.Serializable; // Import Serializable
 
+import java.util.Vector;
 
 public class Faculty implements Serializable { // Implement Serializable
     private static final long serialVersionUID = 1L; // Recommended for version control
@@ -19,12 +21,14 @@ public class Faculty implements Serializable { // Implement Serializable
     private Integer courseCode;
     private Set<Student> students;
 
+
     public Faculty(Faculties faculty, Integer studentAmount, Integer teacherAmount, Integer courseCode) {
         this.faculty = faculty;
         this.studentAmount = studentAmount;
         this.teacherAmount = teacherAmount;
         this.courseCode = courseCode;
         this.students = new HashSet<>();
+    
     }
 
 
@@ -119,3 +123,4 @@ public class Faculty implements Serializable { // Implement Serializable
         return Objects.hash(faculty);
     }
 }
+

@@ -1,5 +1,5 @@
 package Education;
 
 public enum Access_Course {
-	MAJOR, FREE, ELECTIVE;
+	MAJOR, FREE, ELECTIVE,SHARED;
 }

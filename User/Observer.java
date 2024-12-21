@@ -1,5 +1,7 @@
 package User;
 
+import Education.ResearchPaper;
+
 public interface Observer {
-    void update(String news);
+    void update(ResearchPaper paper);
 }

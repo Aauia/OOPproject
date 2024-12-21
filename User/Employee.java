@@ -13,7 +13,8 @@ public abstract class Employee extends Person {
     private ArrayList<Request> requests;
     private Set<EmployeeResearcher> employeeResearchers;
     public EmployeeResearcher er;
-
+    private boolean isResearcher;
+    
     public Employee(String login, String password, String name, String surname, String middleName,
                     LocalDate dateOfBirth, Gender gender, String nationality, Integer phoneNumber, String email,
                     FamilyStatuses familyStatus, String corporateEmail, double salary,
@@ -22,19 +23,19 @@ public abstract class Employee extends Person {
                 familyStatus, corporateEmail);
         this.salary = salary;
         this.timeOfExperience = timeOfExperience;
-        this.requests = new ArrayList<>(); 
-        this.employeeResearchers = new HashSet<>(); 
         if (isResearcher) {
             this.setAsResearcher(true);
         }
+        this.isResearcher=isResearcher;
     } 
     public void setAsResearcher(boolean isResearcher) {
-        if (isResearcher) {
             this.er = new EmployeeResearcher(this,er); 
-        } else {
-            this.er = null; 
-        }
     }
+    
+    public boolean isResearcher() {
+    	return isResearcher;
+    }
+    
     public double getSalary() {
         return salary;
     }

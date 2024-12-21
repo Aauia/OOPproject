@@ -1,11 +1,16 @@
 package User;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 import Education.ResearchPaper;
 
-public abstract class ResearcherDecorator implements Researchable {
-    protected Researchable decoratedResearcher;
+public abstract class ResearcherDecorator implements Researchable, Serializable {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected Researchable decoratedResearcher;
 
     public ResearcherDecorator(Researchable researcher) {
         this.decoratedResearcher = researcher;

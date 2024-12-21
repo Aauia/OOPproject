@@ -1,73 +1,118 @@
 package Education;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import User.Researcher;
-import java.time.LocalDate;
 
-// Enum to specify citation format
-enum Format {
-    PLAIN_TEXT, BIBTEX;
-}
+public class ResearchPaper implements Serializable{
 
-public class ResearchPaper {
-
-    private String title;
+	private static final long serialVersionUID = 1L;
+	private String title;
     private List<Researcher> authors;
-    private List<ResearchPaper> references;
-    private String citations;
+    private List<String> references;
+    private List<String> citations;
+    private int numberOfCitations;
     private List<String> keywords;
     private String category;      // Category of the paper (e.g., AI, Data Science)
     private boolean isApproved;   // Paper approval status
     private boolean isNew;
-    private LocalDate publishingDate; // Publishing date of the paper
 
     // Constructor
-    public ResearchPaper(String title, String category, LocalDate publishingDate, String citations) {
-        this.title = title;
+    public ResearchPaper(String title, String category,int numberOfCitations) {
+    	this.title = title;
         this.category = category;
-        this.publishingDate = publishingDate;
-        this.citations = citations;
         this.isApproved = false;
         this.isNew = true;
+        this.numberOfCitations=numberOfCitations;
         authors = new ArrayList<>();
         references = new ArrayList<>();
+        citations = new ArrayList<>();
         keywords = new ArrayList<>();
     }
 
-    // Methods
-    public String getCitation() {
+    public int getNumberOfCitations() {
+		return numberOfCitations;
+	}
+
+	public void setNumberOfCitations(int numberOfCitations) {
+		this.numberOfCitations = numberOfCitations;
+	}
+
+	// Methods
+    public List<String> getCitation() {
+        // Return citation details (simplified example)
         return this.citations;
     }
-
+    
     public String getTitle() { return title; }
-
     public String getCategory() { return category; }
-
     public boolean isApproved() { return isApproved; }
-
     public boolean isNew() { return isNew; }
-
-    public LocalDate getPublishingDate() { return publishingDate; }
-
-    public void markAsViewed() {
-        this.isNew = false;
-    }
 
     public void addAuthor(Researcher author) {
         authors.add(author);
     }
 
-    public void addReference(ResearchPaper paper) {
+    public void addReference(String paper) {
         references.add(paper);
     }
 
     public void addKeyword(String keyword) {
         keywords.add(keyword);
     }
+    
+    public List<Researcher> getAuthors() {
+		return authors;
+	}
 
-    @Override
+	public void setAuthors(List<Researcher> authors) {
+		this.authors = authors;
+	}
+
+	public List<String> getReferences() {
+		return references;
+	}
+
+	public void setReferences(List<String> references) {
+		this.references = references;
+	}
+
+	public List<String> getCitations() {
+		return citations;
+	}
+
+	public void setCitations(List<String> citations) {
+		this.citations = citations;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	public void setApproved(boolean isApproved) {
+		this.isApproved = isApproved;
+	}
+
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+
+	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -81,46 +126,16 @@ public class ResearchPaper {
         return Objects.hash(title, authors);
     }
 
-    // Method to get citation in specified format
-    public String getCitation(Format f) {
-        switch (f) {
-            case PLAIN_TEXT:
-                return getPlainTextCitation();
-            case BIBTEX:
-                return getBibTeXCitation();
-            default:
-                throw new IllegalArgumentException("Unsupported format: " + f);
-        }
-    }
+	public void addCitation(String citation) {
+		// TODO Auto-generated method stub
+		
+	}
 
-    // Helper method to generate plain text citation
-    private String getPlainTextCitation() {
-        StringBuilder plainText = new StringBuilder();
-        plainText.append("Title: ").append(title).append("\n");
-        plainText.append("Authors: ");
-        for (int i = 0; i < authors.size(); i++) {
-            plainText.append(authors.get(i).getName());
-            if (i < authors.size() - 1) plainText.append(", ");
-        }
-        plainText.append("\nCategory: ").append(category);
-        plainText.append("\nPublishing Date: ").append(publishingDate);
-        return plainText.toString();
-    }
-
-    // Helper method to generate BibTeX citation
-    private String getBibTeXCitation() {
-        StringBuilder bibtex = new StringBuilder();
-        bibtex.append("@article{\n");
-        bibtex.append("  title={").append(title).append("},\n");
-        bibtex.append("  author={");
-        for (int i = 0; i < authors.size(); i++) {
-            bibtex.append(authors.get(i).getName());
-            if (i < authors.size() - 1) bibtex.append(" and ");
-        }
-        bibtex.append("},\n");
-        bibtex.append("  category={").append(category).append("},\n");
-        bibtex.append("  year={").append(publishingDate.getYear()).append("}\n");
-        bibtex.append("}");
-        return bibtex.toString();
-    }
+	@Override
+	public String toString() {
+		return "ResearchPaper [title=" + title + ", authors=" + authors + ", references=" + references + ", citations="
+				+ citations + ", keywords=" + keywords + ", category=" + category + ", isApproved=" + isApproved
+				+ ", isNew=" + isNew + "]";
+	}
+	
 }
