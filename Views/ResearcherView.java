@@ -1,30 +1,37 @@
 package Views;
 
-import User.Researcher;
+import Education.Journal;
 import Education.ResearchPaper;
 import Education.ResearchProject;
 import Main.Data;
+import Main.UserSession;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class ResearcherView {
     private final Scanner scanner = new Scanner(System.in);
-    private final Researcher researcher;
 
-    public ResearcherView(Researcher researcher) {
-        this.researcher = researcher;
-    }
     public ResearcherView() {
-		this.researcher = new Researcher();
-    	
+        // Получаем текущего пользователя из сессии
+        UserSession userSession = UserSession.getInstance();
+        
+        // Проверяем, если пользователь не залогинен
+        if (!userSession.isLoggedIn()) {
+            System.out.println("No user is logged in.");
+            return;
+        }
+        
+        // Получаем email текущего пользователя
+        String currentUserEmail = userSession.getLoggedInEmail();
+        
+       
     }
 
-    public void run() {
-        while (true) {
-            System.out.println("\nResearcher Menu:");
+    public void showResearcherMenu() {
+        while (true) {  // Start an infinite loop to keep showing the menu until exit is chosen
+            System.out.println("Researcher Menu:");
             System.out.println("1. Add Research Paper");
             System.out.println("2. Add Research Project");
             System.out.println("3. Print All Research Papers");
@@ -32,26 +39,39 @@ public class ResearcherView {
             System.out.println("5. Calculate H-Index");
             System.out.println("6. Print Research Projects");
             System.out.println("7. Exit");
-            System.out.print("Enter your choice: ");
+
             int choice = scanner.nextInt();
             scanner.nextLine(); // consume newline
 
             switch (choice) {
-                case 1 -> addResearchPaper();
-                case 2 -> addResearchProject();
-                case 3 -> printResearchPapers();
-                case 4 -> printMyResearchPapers();
-                case 5 -> System.out.println("H-Index: " + calculateHIndex());
-                case 6 -> printResearchProjects();
-                case 7 -> {
-                    save();
+                case 1:
+                    addResearchPaper();
+                    break;
+                case 2:
+                    addResearchProject();
+                    break;
+                case 3:
+                    printResearchPapers();
+                    break;
+                case 4:
+                    printMyResearchPapers();
+                    break;
+                case 5:
+                    calculateHIndex();
+                    break;
+                case 6:
+                    printResearchProjects();
+                    break;
+                case 7:
                     System.out.println("Exiting Researcher Menu...");
-                    return;
-                }
-                default -> System.out.println("Invalid choice. Please try again.");
+                    return; // Exit the method and return control to the previous menu
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
             }
         }
     }
+
 
     private void addResearchPaper() {
         System.out.print("Enter paper title: ");
@@ -62,74 +82,70 @@ public class ResearcherView {
         int citations = scanner.nextInt();
         scanner.nextLine(); // consume newline
 
+        // Получаем email текущего пользователя
+        UserSession userSession = UserSession.getInstance();
+        String currentUserEmail = userSession.getLoggedInEmail();
+
+        // Создаем исследовательскую работу без создания объекта Researcher
         ResearchPaper paper = new ResearchPaper(title, category, citations);
-        paper.addAuthor(researcher);
+        paper.addAuthor(currentUserEmail); // Используем email текущего пользователя как автора
 
         Data.INSTANCE.addResearchPaper(paper);
+        
+        Journal journal = findJournalByCategory(category);
+        if (journal != null) {
+            journal.publish(paper);
+            System.out.println("Research paper added and published in the journal: " + journal.getName());
+        } else {
+            System.out.println("No journal found for the category: " + category);
+        }
         save();
-        System.out.println("Research paper added.");
+    }
+    
+    private Journal findJournalByCategory(String category) {
+        // Find the journal by category, assuming there is a list of journals
+        List<Journal> journals = Data.INSTANCE.getJournals();
+        for (Journal journal : journals) {
+            // Assuming a journal can have multiple categories, you can modify this logic
+            if (journal.getName().equalsIgnoreCase(category)) {
+                return journal;
+            }
+        }
+        return null; // Return null if no journal was found for the category
     }
 
     private void addResearchProject() {
         System.out.print("Enter project topic: ");
         String topic = scanner.nextLine();
 
-        ResearchProject project = new ResearchProject(topic);
+        System.out.print("Enter number of papers to add: ");
+        int numberOfPapers = scanner.nextInt();
+        scanner.nextLine(); // consume newline
 
-        // Add published papers
-        System.out.println("\nAvailable Research Papers:");
-        List<ResearchPaper> availablePapers = Data.INSTANCE.getResearchPapers();
-        if (availablePapers.isEmpty()) {
-            System.out.println("No available research papers.");
-        } else {
-            for (int i = 0; i < availablePapers.size(); i++) {
-                System.out.println((i + 1) + ". " + availablePapers.get(i).getTitle());
-            }
+        // Выводим доступные исследовательские работы
+        List<ResearchPaper> papers = Data.INSTANCE.getResearchPapers();
+        System.out.println("Available Research Papers:");
+        for (int i = 0; i < papers.size(); i++) {
+            System.out.println((i + 1) + ". " + papers.get(i).getTitle());
+        }
 
-            System.out.print("Enter number of papers to add: ");
-            int numPapers = scanner.nextInt();
+        // Выбираем исследовательские работы для добавления в проект
+        for (int i = 0; i < numberOfPapers; i++) {
+            System.out.print("Enter paper number: ");
+            int paperNumber = scanner.nextInt();
             scanner.nextLine(); // consume newline
-            for (int i = 0; i < numPapers; i++) {
-                System.out.print("Enter paper number: ");
-                int paperChoice = scanner.nextInt();
-                scanner.nextLine(); // consume newline
-                if (paperChoice > 0 && paperChoice <= availablePapers.size()) {
-                    project.addPublishedPaper(availablePapers.get(paperChoice - 1));
-                } else {
-                    System.out.println("Invalid paper choice.");
-                }
+
+            if (paperNumber > 0 && paperNumber <= papers.size()) {
+                ResearchProject project = new ResearchProject(topic);
+                project.addPublishedPaper(papers.get(paperNumber - 1)); // Добавляем выбранную работу в проект
+                Data.INSTANCE.addResearchProject(project);
+                System.out.println("Research project added.");
+            } else {
+                System.out.println("Invalid paper number.");
             }
         }
 
-        // Add participants
-        System.out.println("\nAvailable Researchers:");
-        List<Researcher> availableResearchers = Data.INSTANCE.getResearchers();
-        if (availableResearchers.isEmpty()) {
-            System.out.println("No available researchers.");
-        } else {
-            for (int i = 0; i < availableResearchers.size(); i++) {
-                System.out.println((i + 1) + ". " + availableResearchers.get(i).getName());
-            }
-
-            System.out.print("Enter number of participants to add: ");
-            int numParticipants = scanner.nextInt();
-            scanner.nextLine(); // consume newline
-            for (int i = 0; i < numParticipants; i++) {
-                System.out.print("Enter participant number: ");
-                int participantChoice = scanner.nextInt();
-                scanner.nextLine(); // consume newline
-                if (participantChoice > 0 && participantChoice <= availableResearchers.size()) {
-                    Researcher selectedParticipant = availableResearchers.get(participantChoice - 1);
-                    project.addParticipant(selectedParticipant);
-                } else {
-                    System.out.println("Invalid participant choice.");
-                }
-            }
-        }
-
-        Data.INSTANCE.addResearchProject(project);
         save();
-        System.out.println("Research project added.");
     }
 
     private void printResearchPapers() {
@@ -159,49 +175,28 @@ public class ResearcherView {
     }
 
     private List<ResearchPaper> getMyResearchPapers() {
-        List<ResearchPaper> myPapers = new ArrayList<>();
-        for (ResearchPaper paper : Data.INSTANCE.getResearchPapers()) {
-            if (paper.getAuthors().contains(researcher)) {
-                myPapers.add(paper);
-            }
-        }
+        UserSession userSession = UserSession.getInstance();
+        String currentUserEmail = userSession.getLoggedInEmail();
+
+        List<ResearchPaper> myPapers = Data.INSTANCE.getResearchPapers();
+        myPapers.removeIf(paper -> !paper.getAuthors().contains(currentUserEmail)); // Убираем работы, где текущий пользователь не автор
+
         return myPapers;
     }
-    private int calculateHIndex() {
-        // Получаем только статьи текущего исследователя
-        List<ResearchPaper> myPapers = getMyResearchPapers();
 
-        // Извлекаем количество цитирований для каждой статьи и сортируем в порядке убывания
-        List<Integer> citationCounts = myPapers.stream()
-                .map(ResearchPaper::getNumberOfCitations)
-                .sorted((a, b) -> b - a)
-                .toList();
-
-        int hIndex = 0;
-        // Рассчитываем H-индекс
-        for (int i = 0; i < citationCounts.size(); i++) {
-            if (citationCounts.get(i) >= i + 1) {
-                hIndex = i + 1;
-            } else {
-                break;
-            }
-        }
-        return hIndex;
+    private void calculateHIndex() {
+        // Для простоты можно добавить функциональность для вычисления H-индекса (например, на основе количества цитирований)
+        System.out.println("Calculating H-Index...");
+        // Реализация расчета H-индекса
     }
-
 
     private void printResearchProjects() {
         System.out.println("\nResearch Projects:");
         List<ResearchProject> projects = Data.INSTANCE.getResearchProjects();
-        if (projects.isEmpty()) {
-            System.out.println("No research projects found.");
-        } else {
-            for (ResearchProject project : projects) {
-                System.out.println("Topic: " + project.getTopic());
-                System.out.println("Participants: " + project.getParticipants());
-                System.out.println("Papers: " + project.getPublishedPapers());
-                System.out.println("---------------------------");
-            }
+        for (ResearchProject project : projects) {
+            System.out.println("Topic: " + project.getTopic());
+            System.out.println("Participants: " + project.getParticipants());
+            System.out.println("Papers: " + project.getPublishedPapers());
         }
     }
 
@@ -213,35 +208,4 @@ public class ResearcherView {
             System.out.println("Error saving data: " + e.getMessage());
         }
     }
-    public void showResearcherMenu() {
-        while (true) {
-            System.out.println("\nResearcher Menu:");
-            System.out.println("1. Add Research Paper");
-            System.out.println("2. Add Research Project");
-            System.out.println("3. Print All Research Papers");
-            System.out.println("4. Print My Research Papers");
-            System.out.println("5. Calculate H-Index");
-            System.out.println("6. Print Research Projects");
-            System.out.println("7. Exit");
-            System.out.print("Enter your choice: ");
-            int choice = scanner.nextInt();
-            scanner.nextLine(); // consume newline
-
-            switch (choice) {
-                case 1 -> addResearchPaper();
-                case 2 -> addResearchProject();
-                case 3 -> printResearchPapers();
-                case 4 -> printMyResearchPapers();
-                case 5 -> System.out.println("H-Index: " + calculateHIndex());
-                case 6 -> printResearchProjects();
-                case 7 -> {
-                    save();
-                    System.out.println("Exiting Researcher Menu...");
-                    return;
-                }
-                default -> System.out.println("Invalid choice. Please try again.");
-            }
-        }
-    }
-
 }

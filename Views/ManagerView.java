@@ -1,3 +1,4 @@
+
 package Views;
 
 import java.io.IOException;
@@ -7,7 +8,6 @@ import java.util.Scanner;
 import Education.News;
 import Education.Request;
 import Main.Data;
-//import Education.News;
 import User.Student;
 
 public class ManagerView {
@@ -55,14 +55,14 @@ public class ManagerView {
                         viewStudentsInfo();
                         break;
                     case 4:
-//                        publishNews();
+                        publishNews();
                         break;
                     case 5:
                         System.out.println("Exiting the system. Goodbye!");
                         exit(); // Call exit method to clean up before exiting
                         return; // Exit the loop and terminate the program
                     case 6: 
-//                    	resetNews();
+                    	resetNews();
                     	break;
                     default:
                         System.out.println("Invalid choice. Please try again.");

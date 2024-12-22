@@ -1,26 +1,12 @@
 package Views;
 
 import java.io.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Vector;
-
-import Education.Complaint;
-import Education.Request;
-import Education.StatusInfo;
-import Education.UrgencyLevel;
-import Education.RequestType;
-import Main.Data;
-import Main.UserSession;
-import User.Teacher;
-import User.Student;
-import User.Employee;
-import User.FamilyStatuses;
-import User.Gender;
-import User.Admin;
-import User.Dean;
+import Education.*;
+import Main.*;
+import User.*;
 
 public class DeanView {
     private final Scanner in = new Scanner(System.in);
@@ -265,5 +251,4 @@ public class DeanView {
         }
     }
 }
-
 

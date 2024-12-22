@@ -2,7 +2,6 @@ package User;
 
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.Observable;
 
 public class Librarian extends Employee {
     private static final long serialVersionUID = 1L;
@@ -13,11 +12,7 @@ public class Librarian extends Employee {
         super(login, password, name, surname, middleName, dateOfBirth, gender, nationality, phoneNumber, email, familyStatus,
                 corporateEmail, salary, timeOfExperience, isResearcher);
         new HashMap<>();
-        if (isResearcher) {
-            this.setAsResearcher(true);
-        }
     }
 
    
 }
-

@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Vector;
+import java.util.stream.Collectors;
 
-import Education.Access_Course;
-import Education.Course;
-import Education.Curriculum;
-import Education.Faculties;
+import Education.*;
 import Main.Data;
 import User.*;
 
@@ -42,44 +42,111 @@ public class adminView {
         printList(Data.INSTANCE.getCourses());
         return true;
     }
+    public List<Lesson> createLessonsForCourse(int numLessons ) {
+        Scanner scanner = new Scanner(System.in);
+        List<Lesson> lessons = new ArrayList<>();
+       
 
-    public boolean showCurriculums() {
-        if (Data.INSTANCE.getRup().isEmpty()) {
-            System.out.println("No curriculums yet...");
-            return false;
+        for (int i = 0; i < numLessons; i++) {
+            System.out.println("Enter the course code:  ");
+            String courseCode = scanner.nextLine();
+            Course course = Data.findCourseByCode(courseCode);
+            
+            System.out.println("Enter lesson ID: ");
+            String lessonID = scanner.nextLine();
+            
+            System.out.println("Enter teacher for lesson: ");
+            String teacher = scanner.nextLine();
+            
+            System.out.println("Enter lesson type (e.g., LECTURE, PRACTICAL): ");
+            String lessonTypeStr = scanner.nextLine();
+            LessonType lessonType = LessonType.valueOf(lessonTypeStr.toUpperCase());
+
+            System.out.println("Enter room number: ");
+            int room = Integer.parseInt(scanner.nextLine());
+            System.out.println("Enter time: ");
+            String time = scanner.nextLine();
+            System.out.println("Enter day: ");
+            String day = scanner.nextLine();
+
+            // Create a new lesson for this course
+            Lesson lesson = new Lesson(lessonID, teacher, course, lessonType, room,time , day);
+            lessons.add(lesson);
         }
-        printList(Data.INSTANCE.getRup());
-        return true;
+
+        return lessons;
     }
 
-    public boolean showCurriculumsForFaculty() {
-        System.out.println("Enter the faculty name: ");
-        String facultyName = in.next();
 
-        Faculties faculty;
-        try {
-            faculty = Faculties.valueOf(facultyName.toUpperCase().replace(" ", "_"));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invalid faculty name. Please try again.");
-            return false;
-        }
 
-        List<Curriculum> filteredCurriculums = new ArrayList<>();
-        for (Curriculum curriculum : Data.INSTANCE.getRup()) {
-            if (curriculum.getFaculty() == faculty) {
-                filteredCurriculums.add(curriculum);
-            }
-        }
+
+
+    public boolean showCurriculums(Faculties faculty, Specialties specialty, Integer semester) {
+        // Filter curriculums based on provided parameters
+        List<Curriculum> filteredCurriculums = Data.INSTANCE.getRup().stream()
+                .filter(curriculum -> (faculty == null || curriculum.getFaculty() == faculty) &&
+                        (specialty == null || curriculum.getSpecialty() == specialty) &&
+                        (semester == null || curriculum.getSemesterCourses().containsKey(semester)))
+                .collect(Collectors.toList());
 
         if (filteredCurriculums.isEmpty()) {
-            System.out.println("No curriculums found for faculty: " + facultyName);
+            System.out.println("No curriculums found with the provided filters.");
             return false;
         }
 
-        System.out.println("Curriculums for faculty: " + facultyName);
+        // Display the filtered curriculums
         printList(filteredCurriculums);
         return true;
     }
+
+
+    public boolean showCurriculumsByFilter() {
+        System.out.println("Select a filter to apply:\n1) By Faculty\n2) By Specialization\n3) By Semester\n4) Show All");
+        int choice = in.nextInt();
+
+        switch (choice) {
+            case 1:
+                // Ask for faculty
+                System.out.println("Enter the faculty name: ");
+                String facultyName = in.next();
+                Faculties faculty = null;
+                try {
+                    faculty = Faculties.valueOf(facultyName.toUpperCase().replace(" ", "_"));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid faculty name. Please try again.");
+                    return false;
+                }
+                return showCurriculums(faculty, null, null);
+
+            case 2:
+                // Ask for specialization (major)
+                System.out.println("Enter the specialization: ");
+                String specializationName = in.next();
+                Specialties specialty = null;
+                try {
+                    specialty = Specialties.valueOf(specializationName.toUpperCase().replace(" ", "_"));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Invalid specialization name. Please try again.");
+                    return false;
+                }
+                return showCurriculums(null, specialty, null);
+
+            case 3:
+                // Ask for semester
+                System.out.println("Enter the semester number: ");
+                int semesterNumber = in.nextInt();
+                return showCurriculums(null, null, semesterNumber);
+
+            case 4:
+                // Show all curriculums
+                return showCurriculums(null, null, null);
+
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                return false;
+        }
+    }
+
 
     private void save() throws IOException {
         Data.write();
@@ -95,6 +162,7 @@ public class adminView {
     }
 
     public void addStudent() {
+        // Basic Student Information
         System.out.println("Enter login: ");
         String login = in.next();
         System.out.println("Enter password: ");
@@ -129,31 +197,102 @@ public class adminView {
         System.out.println("Enter student ID: ");
         String studentId = in.next();
 
-        // Create the new Student object
-        Student newStudent = new Student(login, password, name, surname, middleName, dateOfBirth, gender, 
-                                          nationality, phoneNumber, email, familyStatus, corporateEmail, 
-                                          gpa, null, null, null, null, studentId, null, null, null, false);
+        // Ask if the student is a researcher
+        System.out.println("Is the student a researcher (yes/no)? ");
+        String isResearcherInput = in.next().toLowerCase();
+        boolean isResearcher = isResearcherInput.equals("yes");
 
-        Data.INSTANCE.getStudents().add(newStudent);  // Add the new student to the list
-        System.out.println("Student added! ");
+        // Ask for Faculty
+        System.out.println("Enter faculty: ");
+        String facultyInput = in.next();
+        Faculties faculty = Faculties.valueOf(facultyInput.toUpperCase());
+
+        // Ask for Student's Specialty
+        System.out.println("Enter student's specialty: ");
+        String specialtyInput = in.next();
+        Specialties specialty = Specialties.valueOf(specialtyInput.toUpperCase());
+        
+
+        // Ask for Semester
+        System.out.println("Enter current semester: ");
+        int semester = in.nextInt();
+        System.out.println("Enter number of lessons for course ");
+        int numLessons = in.nextInt();
+        List<Lesson> lessons = new ArrayList<>();
+        lessons = createLessonsForCourse(numLessons);
+        Schedule schedule = new Schedule(studentId,lessons);
+        Student newStudent = new Student(
+                login, password, name, surname, middleName, dateOfBirth, gender,
+                nationality, phoneNumber, email, familyStatus, corporateEmail, gpa,
+                null, null, null, faculty, studentId, null, null, isResearcher, schedule, semester, specialty, null
+            );
+
+            Data.INSTANCE.addStudent(newStudent);
+
+            
+
     }
+
+
 
     public void addCourse() {
         System.out.println("Enter name of the course: ");
         String courseName = in.next();
+        
         System.out.println("Enter course code: ");
         String courseCode = in.next();
-        System.out.println("Enter the course type (MAJOR, FREE, ELECTIVE): ");
+        
+        System.out.println("Enter the course type (MAJOR, FREE, ELECTIVE, SHARED): ");
         String typeInput = in.next().toUpperCase();
         Access_Course type = Access_Course.valueOf(typeInput);
+        
         System.out.println("Enter the credit value: ");
-        int credit = getValidIntegerInput("");
+        int credit = getValidIntegerInput("Enter course credit: ");
+        
+        // Initialize all required attributes based on the user input
+        Integer  studentAmount = null;
+        Vector<String> prerequisiteCourses = new Vector<>();
+        Vector<Faculties> sharedFaculties = null;
 
-        Course newCourse = new Course(courseCode, courseName, type, credit);
+        // Handling accessMajor (example)
+  
+        
+        // Handling prerequisites
+        System.out.println("Enter the number of prerequisite courses: ");
+        int numPrereqs = getValidIntegerInput("Enter number of prerequisites: ");
+        for (int i1 = 0; i1 < numPrereqs; i1++) {
+            System.out.println("Enter prerequisite course code for course " + (i1 + 1) + ": ");
+            String prereqCourseCode = in.next();
+            prerequisiteCourses.add(prereqCourseCode);
+        }
+        
+        // Handling shared faculties only for SHARED type
+        if (type == Access_Course.SHARED) {
+            sharedFaculties = new Vector<>();
+            System.out.println("Enter the number of shared faculties: ");
+            int numFaculties = getValidIntegerInput("Enter number of shared faculties: ");
+            for (int i1 = 0; i1 < numFaculties; i1++) {
+                System.out.println("Enter shared faculty name for faculty " + (i1 + 1) + ": ");
+                String facultyName = in.next();
+                Faculties faculty;
+                faculty = Faculties.valueOf(facultyName.toUpperCase().replace(" ", "_"));
+                sharedFaculties.add(faculty); // Assuming Faculties class has this constructor
+            }
+        }
+
+        // Create a new Course object
+        Course newCourse = new Course(courseCode, courseName, type, credit, studentAmount, prerequisiteCourses, sharedFaculties);
+        
+        // Add the course to your course list (assuming Data.INSTANCE.getCourses() is your course list)
         Data.INSTANCE.getCourses().add(newCourse);
-        System.out.println("Course added! ");
-    }
+        System.out.println("Course added successfully!");
+        }
+        
+        
+        
 
+    
+ 
     public void addCurriculum() {
         System.out.println("Enter the major name: ");
         String majorName = in.next();
@@ -161,8 +300,10 @@ public class adminView {
         String facultyName = in.next();
 
         Faculties faculty;
+        Specialties specialty;
         try {
             faculty = Faculties.valueOf(facultyName.toUpperCase().replace(" ", "_"));
+            specialty= Specialties.valueOf(majorName.toUpperCase().replace(" ", "_"));
         } catch (IllegalArgumentException e) {
             System.out.println("Invalid faculty name. Please try again.");
             return;
@@ -186,7 +327,9 @@ public class adminView {
                 int credit = getValidIntegerInput("");
 
                 // Create the course and add it to the list for this semester
-                Course course = new Course(courseCode, courseName, type, credit);
+                Course course = Data.findCourseByCode(courseCode);
+                
+                
                 coursesForSemester.add(course);
             }
             // Add the list of courses for this semester to the map
@@ -194,7 +337,7 @@ public class adminView {
         }
 
         // Create the new curriculum and add it to the Data
-        Data.INSTANCE.getRup().add(new Curriculum(majorName, faculty, semesterCourses));
+        Data.INSTANCE.getRup().add(new Curriculum(specialty, faculty, semesterCourses));
         System.out.println("Curriculum added!");
     }
 
@@ -219,7 +362,7 @@ public class adminView {
             System.out.println("Welcome admin!");
 
             menu: while (true) {
-                System.out.println("What do you want to do?\n 1) Add student \n 2) Add course \n 3) Add course to a Student \n 4) View students \n 5) Add Curriculum \n 6) Exit \n 7) Show Courses");
+                System.out.println("What do you want to do?\n 1) Add student \n 2) Add course \n 3) Add course to a Student \n 4) View students \n 5) Add Curriculum \n 6) Exit \n 7) Show Courses \n 8)Show curriculum");
                 int choice = in.nextInt();
                 switch (choice) {
                     case 1:
@@ -288,6 +431,31 @@ public class adminView {
                     case 7:
                         showCourses();
                         continue menu;
+                    case 8:	
+                        System.out.println("Enter the major name: ");
+                        String majorName = in.next();
+                        System.out.println("Enter the faculty for the major: ");
+                        String facultyName = in.next();
+
+                        Faculties faculty;
+                        Specialties specialty;
+                        try {
+                            faculty = Faculties.valueOf(facultyName.toUpperCase().replace(" ", "_"));
+                            specialty= Specialties.valueOf(majorName.toUpperCase().replace(" ", "_"));
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid faculty name. Please try again.");
+                            return;
+                        }
+                        System.out.println("Enter semester: ");
+                        Integer sem = in.nextInt();
+                        if (!showCurriculums(faculty, specialty, sem)) continue menu;
+                        System.out.println("\n 1) Return back \n 2) Exit");
+                        choice = in.nextInt();
+                        if (choice == 1) continue menu;
+                        if (choice == 2) {
+                            exit();
+                            break menu;
+                        }
                     default:
                         System.out.println("Invalid option. Try again.");
                 }

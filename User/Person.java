@@ -188,9 +188,9 @@ public abstract class Person implements Serializable, Observer {
 	}
 	
 	@Override
-	public void update(ResearchPaper paper) {
-		// TODO Auto-generated method stub
-		
-	}
+    public void update(ResearchPaper paper) {
+        // Example of handling an update (paper publication)
+        System.out.println(name + " has been notified about the new paper: " + paper.getTitle());
+    }
     
 }

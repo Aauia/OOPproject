@@ -3,8 +3,6 @@ package User;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-
 import Education.Complaint;
 import Education.Request;
 import Education.StatusInfo;
@@ -22,6 +20,10 @@ public class Dean extends Employee {
               email, familyStatus, corporateEmail, salary, timeOfExperience, isResearcher);
         this.complaints = new ArrayList<>(); 
         this.requests = new ArrayList<>(); 
+        
+        if (isResearcher) {
+            this.setAsResearcher(true); 
+        }
     }
 
 
@@ -84,5 +86,6 @@ public class Dean extends Employee {
                 ", complaints=" + complaints +
                 "} " + super.toString();
     }
+
 
 }

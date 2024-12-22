@@ -171,11 +171,15 @@ public class Data implements Serializable {
         	        "10 years",                 // Time of Experience
         	           true                     // Is Researcher
         	    ));
+        
+        journals.add(new Journal("Robotics"));
+        journals.add(new Journal("Business"));
+        journals.add(new Journal("Nature"));
 
         
 
      }
-     private static void saveData() {
+     public static void saveData() {
          try {
              Data.write();
          } catch (IOException e) {

@@ -1,10 +1,8 @@
 package User;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Observable;
 import java.util.Set;
 //import javax.swing.JTable;
 import Education.*;
@@ -31,6 +29,10 @@ public class Teacher extends Employee {
         this.complaints = new HashSet<>();
         this.teacherResearchers = new HashSet<>();
         this.courses = new HashSet<>();
+        
+        if (isResearcher) {
+            this.setAsResearcher(true); 
+        }
     }
 
     public void setAsResearcher(boolean isResearcher) {
@@ -116,9 +118,4 @@ public class Teacher extends Employee {
     }
 
   
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
 }

@@ -1,23 +1,16 @@
 package User;
 
-import java.util.Vector;
-import java.util.Set;
-
-import Education.Complaint;
-import Education.Course;
-import Education.Request;
 import Education.ResearchPaper;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Observable;
-import javax.swing.JTable;
-import javax.swing.table.DefaultTableModel;
 
 public class Manager extends Employee implements Subject {
 
-    private ManagerTypes managerType;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private ManagerTypes managerType;
     private String managerId;
 
     public Manager(String login, String password, String name, String surname, String middleName,

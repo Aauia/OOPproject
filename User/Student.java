@@ -184,11 +184,7 @@ public class Student extends Person  {
 
     
 
-	@Override
-	public void update(Observable o, Object arg) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 	public Faculties getFaculty() {
 		// TODO Auto-generated method stub
 		return faculty;
@@ -207,4 +203,3 @@ public class Student extends Person  {
     }
 }
   
-

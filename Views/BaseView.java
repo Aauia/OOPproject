@@ -1,6 +1,7 @@
 package Views;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -12,7 +13,7 @@ import Education.*;
 public class BaseView {
     private final String login;
     private final String password;
-    private Person user; // Declare the user object
+    private static Person user; // Declare the user object
 
     // Constructor
     public BaseView(String login, String password) throws IOException {
@@ -54,7 +55,7 @@ public class BaseView {
     }
 
     // Create instances of AdminView and StudentView
-    private static final AdminView adminView1 = new AdminView(); // Corrected to AdminView
+    private static final adminView adminView1 = new adminView(); // Corrected to AdminView
     private static final StudentView studentView = new StudentView();
     private static final TeacherView teacherView = new TeacherView();
     private static final LibrarianView librarianView = new LibrarianView();
@@ -117,14 +118,15 @@ public class BaseView {
             		 researcherView.showResearcherMenu(); // Если пользователь исследователь, показываем меню
                  } else {
                      System.out.println("Access denied. You are not a researcher.");
+                     break;
                  }
                  break;
             case 2:
-                System.out.println("Managing Journals (Admin)");
+            	manageJournals(user);
                 break;
             case 3:
-                System.out.println("Managing News (Admin)");
-                break;
+            	viewNews();
+            	break;
             case 4 : 
             	libraryMenu(user);
 			try {
@@ -163,10 +165,10 @@ public class BaseView {
                      System.out.println("Access denied. You are not a researcher.");
                  }
             case 2:
-                System.out.println("Managing Journals (Student)");
+            	manageJournals(user);
                 break;
             case 3:
-                System.out.println("Managing News (Student)");
+            	viewNews();
                 break;
             case 4 : 
             	libraryMenu(user);
@@ -207,10 +209,10 @@ public class BaseView {
                      System.out.println("Access denied. You are not a researcher.");
                  }
             case 2:
-                System.out.println("Managing Journals (Teacher)");
+            	manageJournals(user);
                 break;
             case 3:
-                System.out.println("Managing News (Teacher)");
+            	viewNews();
                 break;
             case 4 : 
             	libraryMenu(user);
@@ -251,7 +253,7 @@ public class BaseView {
                      System.out.println("Access denied. You are not a researcher.");
                  }
             case 2:
-            	System.out.println("Managing Journals (Librarian)");
+            	manageJournals(user);
             	break;
             case 3:
             	viewNews();
@@ -297,7 +299,7 @@ public class BaseView {
                      System.out.println("Access denied. You are not a researcher.");
                  }
             case 2:
-            	System.out.println("Managing Journals (Librarian)");
+            	manageJournals(user);
             	break;
             case 3:
             	viewNews();
@@ -328,6 +330,103 @@ public class BaseView {
 				});
         }
         }
+    
+ // Adding the new Journal-related options in the "Managing Journals" section.
+    private static void manageJournals(Person user) {
+        System.out.println("\n=== Journals ===");
+        List<Journal> journals = Data.INSTANCE.getJournals(); // Fetch the list of journals
+
+        if (journals.isEmpty()) {
+            System.out.println("No journals are available.");
+        } else {
+            for (int i = 0; i < journals.size(); i++) {
+                System.out.println((i + 1) + ". " + journals.get(i).getName());
+            }
+            System.out.println("Enter the number of the journal to manage, or 0 to return to the main menu:");
+            int journalChoice = scanner.nextInt();
+            if (journalChoice == 0) {
+                return; // Exit back to the main menu
+            }
+
+            if (journalChoice > 0 && journalChoice <= journals.size()) {
+                Journal selectedJournal = journals.get(journalChoice - 1);
+                manageJournalSubscriptions(user, selectedJournal);
+            } else {
+                System.out.println("Invalid choice, please try again.");
+            }
+        }
+    }
+
+    private static void manageJournalSubscriptions(Person user, Journal journal) {
+        // Check if the user is already subscribed
+        if (journal.isSubscribed(user)) {
+            System.out.println("You are already subscribed to the " + journal.getName() + " journal.");
+            System.out.println("1. View Papers");
+            System.out.println("2. Unsubscribe");
+            System.out.println("3. Exit to Main Menu");
+
+            int choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    viewPapers(journal);
+                    break;
+                case 2:
+                    journal.unsubscribe(user);
+                    System.out.println("You have unsubscribed from " + journal.getName() + ".");
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Invalid choice, try again.");
+                    manageJournalSubscriptions(user, journal);
+            }
+        } else {
+            System.out.println("You are not subscribed to the " + journal.getName() + " journal.");
+            System.out.println("1. Subscribe");
+            System.out.println("2. Exit to Main Menu");
+
+            int choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                    journal.subscribe(user);
+                    System.out.println("You have subscribed to " + journal.getName() + ".");
+                    break;
+                case 2:
+                    return;
+                default:
+                    System.out.println("Invalid choice, try again.");
+                    manageJournalSubscriptions(user, journal);
+            }
+        }
+    }
+
+    private static void viewPapers(Journal journal) {
+        System.out.println("\n=== " + journal.getName() + " Papers ===");
+        List<ResearchPaper> papers = journal.getPapers();
+
+        if (papers.isEmpty()) {
+            System.out.println("No papers available in this journal.");
+        } else {
+            for (ResearchPaper paper : papers) {
+                System.out.println(paper.getTitle() + " by " + paper.getAuthors());
+            }
+        }
+
+        System.out.println("1. Return to Journal Management");
+        System.out.println("2. Exit to Main Menu");
+        int choice = scanner.nextInt();
+        switch (choice) {
+            case 1:
+                manageJournalSubscriptions(user, journal);
+                break;
+            case 2:
+                return;
+            default:
+                System.out.println("Invalid choice, try again.");
+                viewPapers(journal);
+        }
+    }
+
     
     private static void viewNews() {
         System.out.println("Displaying News...");
@@ -485,4 +584,3 @@ public class BaseView {
     }
     
 }
-

@@ -1,5 +1,6 @@
 package User;
 
 public enum Gender {
-       MALE,FEMALE
+	FEMALE,
+	MALE;
 }
