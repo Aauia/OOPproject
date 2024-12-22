@@ -121,7 +121,3 @@ public class Complaint implements Serializable {
                 + ", levelOfUrgency=" + levelOfUrgency + ", status=" + status + ", complainedTo=" + complainedTo + "]";
     }
 }
-
-
-
-

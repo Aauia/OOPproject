@@ -166,4 +166,3 @@ public class Course implements Serializable {
         return Objects.hash(courseCode);
     }
 }
-

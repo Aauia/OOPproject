@@ -59,4 +59,3 @@ public class Transcript implements Serializable {
 		return semesterData;
 	}
 }
-

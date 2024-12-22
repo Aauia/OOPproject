@@ -5,27 +5,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import User.Researcher;
-
 public class ResearchPaper implements Serializable{
 
 	private static final long serialVersionUID = 1L;
 	private String title;
-    private List<Researcher> authors;
+    private List<String> authors;
     private List<String> references;
     private List<String> citations;
     private int numberOfCitations;
     private List<String> keywords;
-    private String category;      // Category of the paper (e.g., AI, Data Science)
-    private boolean isApproved;   // Paper approval status
-    private boolean isNew;
+    private String category;
 
     // Constructor
     public ResearchPaper(String title, String category,int numberOfCitations) {
     	this.title = title;
         this.category = category;
-        this.isApproved = false;
-        this.isNew = true;
         this.numberOfCitations=numberOfCitations;
         authors = new ArrayList<>();
         references = new ArrayList<>();
@@ -49,11 +43,9 @@ public class ResearchPaper implements Serializable{
     
     public String getTitle() { return title; }
     public String getCategory() { return category; }
-    public boolean isApproved() { return isApproved; }
-    public boolean isNew() { return isNew; }
 
-    public void addAuthor(Researcher author) {
-        authors.add(author);
+    public void addAuthor(String currentUserEmail) {
+        authors.add(currentUserEmail);
     }
 
     public void addReference(String paper) {
@@ -64,11 +56,11 @@ public class ResearchPaper implements Serializable{
         keywords.add(keyword);
     }
     
-    public List<Researcher> getAuthors() {
+    public List<String> getAuthors() {
 		return authors;
 	}
 
-	public void setAuthors(List<Researcher> authors) {
+	public void setAuthors(List<String> authors) {
 		this.authors = authors;
 	}
 
@@ -104,14 +96,6 @@ public class ResearchPaper implements Serializable{
 		this.category = category;
 	}
 
-	public void setApproved(boolean isApproved) {
-		this.isApproved = isApproved;
-	}
-
-	public void setNew(boolean isNew) {
-		this.isNew = isNew;
-	}
-
 	@Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -134,8 +118,7 @@ public class ResearchPaper implements Serializable{
 	@Override
 	public String toString() {
 		return "ResearchPaper [title=" + title + ", authors=" + authors + ", references=" + references + ", citations="
-				+ citations + ", keywords=" + keywords + ", category=" + category + ", isApproved=" + isApproved
-				+ ", isNew=" + isNew + "]";
+				+ citations + ", keywords=" + keywords + ", category=" + category + "]";
 	}
 	
 }

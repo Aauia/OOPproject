@@ -50,5 +50,3 @@ public class Curriculum implements Serializable {
                 '}';
     }
 }
-
-

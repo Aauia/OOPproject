@@ -1,11 +1,11 @@
 package Education;
-import java.io.Serializable;
+
 import java.util.List;
 
 /**
  * Represents discipline associations, linking a school with access conditions.
  */
-public class DisciplineAssociation  implements Serializable{
+public class DisciplineAssociation {
 
     // Attributes
     private Faculties faculty; // Custom type, assumed to exist
