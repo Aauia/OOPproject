@@ -297,6 +297,7 @@ public class BaseView {
                 break;
             case 6:
                 System.out.println("Exiting Teacher Menu...");
+            	exitMenu();
                 break;
             default:
                 System.out.println("Invalid choice. Try again.");
@@ -330,15 +331,16 @@ public class BaseView {
 				try {
 					librarianView.run();
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
+					
 					e.printStackTrace();
 				}
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
+				
 				e.printStackTrace();
 			}
             case 6:
             	exitMenu();
+            	saveData();
             	break;
             default:
             	invalidChoice(() -> {
@@ -382,6 +384,10 @@ public class BaseView {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+            case 6:
+            	exitMenu();
+            	saveData();
+            	break;
             default:
             	invalidChoice(() -> {
 					try {
@@ -642,6 +648,14 @@ public class BaseView {
         System.out.println("Invalid choice. Try again.");
         retryMenu.run();
     }
+    private static void saveData() {
+        try {
+            Data.write();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+   
     private static void exitMenu() {
         System.out.println("Exiting... Goodbye!");
     }

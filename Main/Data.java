@@ -2,10 +2,10 @@ package Main;
 
 import java.io.File;
 
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.*;
@@ -14,7 +14,6 @@ import java.util.*;
 import Education.*;
 import User.*;
 
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 public class Data implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -41,28 +40,25 @@ public class Data implements Serializable {
     protected Vector<ResearchProject> researchProjects;
 
     
+    public static Data INSTANCE;
 
-    public static Data INSTANCE; 
     static {
         try {
             if (new File("UniversityData").exists()) {
-                System.out.println("File exists, trying to read data...");
                 INSTANCE = read();
-            } else {
-                System.out.println("File does not exist, creating new Data...");
+            }
+            if (INSTANCE == null) {
                 INSTANCE = new Data();
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("Exception while initializing Data.");
-            INSTANCE = new Data();
+            e.printStackTrace(); // Log exception details
+            INSTANCE = new Data(); // Fallback to a new instance
         }
-
-
         
+        // Ensure all critical fields are initialized
+        if (INSTANCE.requests == null) INSTANCE.requests = new Vector<>();
+        if (INSTANCE.complaints == null) INSTANCE.complaints = new Vector<>();
     }
-    
-
 
      private Data() {
     	 deans = new Vector<>();
@@ -83,141 +79,9 @@ public class Data implements Serializable {
         researchPapers= new Vector<>();
         researchProjects= new Vector<>();
         researchers=new Vector<>();
-        
-        
-        admins.add(new Admin("admin1", "password123", "John", "Doe", "Middle", 
-                LocalDate.of(1980, 5, 15), Gender.MALE, "American", 
-                1234567890, "admin1@example.com", FamilyStatuses.SINGLE, 
-                "jdoe@university.edu", 5000.0, "10 years", "AdminHead", false));
-        admins.add(new Admin("admin2", "pass456", "Jane", "Smith", "Middle", 
-                LocalDate.of(1990, 3, 20), Gender.FEMALE, "British", 
-                987654321, "admin2@example.com", FamilyStatuses.MARRIED, 
-                "jsmith@university.edu", 4500.0, "5 years", "AdminAssistant", false));
-
-        Course c1 = new Course("CS101", "Introduction to Computer Science", Access_Course.MAJOR, 3, 100, null,null,2,2);
-        Course c2 = new Course("MATH101", "Calculus I", Access_Course.MAJOR, 4, 80, null, null,2,1);
-        Curriculum site1 = new Curriculum(Specialties.CS_SE, Faculties.SITE, Map.of(1, Arrays.asList(c1,c2)));
-        Vector<String> co1 = new Vector<>();
-        co1.add(c2.getCourseCode());
-        Course c3 = new Course("CS102", "Data Structures", Access_Course.MAJOR, 3, 100, null, null,2,2);
-        Course c4 = new Course("MATH102", "Calculus II", Access_Course.MAJOR, 4, 80, null, null,2,2);
-        Course c5 = new Course("CS1021", "Data StructuresII", Access_Course.MAJOR, 3, 100, null, null,2,2);
-
-       
-        
-        courses.add(c1);
-        courses.add(c2);
-        courses.add(c3);
-        courses.add(c4);
-        courses.add(c5);
-        
-        site1.addCoursesForSemester(2, Arrays.asList(c3, c4));
-        rup.add(site1);
-        students.add(new Student("student2", "password2", "Bob", "Williams", "Middle", 
-                LocalDate.of(1999, 9, 15), Gender.MALE, "British", 
-                987654321, "student2@example.com", FamilyStatuses.MARRIED, 
-                "bob.williams@university.edu", 3, null, 
-                null,null, Faculties.SITE, "S67890", null, 
-                new HashMap<>(), true, new Schedule("S67890",null), 1, Specialties.CS_SE, new Transcript("S67890"),site1));
-        addStudent(new Student("student3", "password3", "Robert", "Williams", "Middle", 
-                LocalDate.of(1999, 9, 15), Gender.MALE, "British", 
-                987654321, "student2@example.com", FamilyStatuses.MARRIED, 
-                "bob.williams@university.edu", 3, null, 
-                null,null, Faculties.SITE, "S67888", null, 
-                new HashMap<>(), true, new Schedule("S67890",null), 1, Specialties.CS_SE, new Transcript("S67888"),site1));
-        Teacher teacher1 = new Teacher("T123", "password123", "Dr. Smith", "John", "M", LocalDate.of(1980, 5, 15),
-                Gender.MALE, "American", 123456789, "dr.smith@example.com", FamilyStatuses.SINGLE,
-                "dr.smith@university.edu", 50000, "10 years", TeacherTypes.PROFESSOR, "T1001", true);
-
-        // Assign Courses to Teacher
-        teacher1.addCourse(c1);
-        teacher1.addCourse(c3);
-  
-
-        // Add Teacher to List
-        teachers.add(teacher1);
-        Teacher teacher2 = new Teacher("T124", "password456", "Dr. Johnson", "Emily", "F", LocalDate.of(1975, 8, 22),
-                Gender.FEMALE, "Canadian", 987654321, "dr.johnson@example.com", FamilyStatuses.MARRIED,
-                "dr.johnson@university.edu", 55000, "15 years", TeacherTypes.PROFESSOR, "T1002", true);
-        Teacher teacher3 = new Teacher("T125", "password567", "Dr. Johnson", "Emily", "F", LocalDate.of(1975, 8, 22),
-                Gender.FEMALE, "Canadian", 987654321, "dr.johnson@example.com", FamilyStatuses.MARRIED,
-                "dr.johnson@university.edu", 55000, "15 years", TeacherTypes.PROFESSOR, "T1002", true);
-        
-        
-		 teachers.add(teacher3);
-		 saveData();
-		Lesson lesson1 = new Lesson("L1", "T123", c1, LessonType.LECTURE, 101, "10:00 AM - 12:00 PM", "Monday", 80);
-		Lesson lesson2 = new Lesson("L2", "T124", c1, LessonType.LECTURE, 102, "1:00 PM - 3:00 PM", "Wednesday", 80);
-		Lesson lesson3 = new Lesson("P1", "T125", c2, LessonType.PRACTICE, 201, "9:00 AM - 11:00 AM", "Tuesday", 40);
-		Lesson lesson4 = new Lesson("L4", "T123", c3, LessonType.LECTURE, 103, "11:00 AM - 1:00 PM", "Thursday", 75);
-		Lesson lesson5 = new Lesson("L5", "T124", c4, LessonType.PRACTICE, 104, "2:00 PM - 4:00 PM", "Friday", 65);
-		Lesson lesson6 = new Lesson("P6", "T124", c4, LessonType.PRACTICE, 109, "2:00 PM - 4:00 PM", "Friday", 65);
-		lessons.add(lesson1);
-		lessons.add(lesson2);
-		lessons.add(lesson3);
-		lessons.add(lesson4);
-		lessons.add(lesson5);
-		lessons.add(lesson6);
-		
-
-        managers.add(new Manager(
-                "manager01",                
-                "securePassword",          
-                "Marat",                       
-                "Bystrov",                       
-                "Axmetov",                      
-                LocalDate.of(1985, 5, 20),    
-                Gender.MALE,                 
-                "American",                 
-                1234567890,                  
-                "john.doe@example.com",   
-                FamilyStatuses.MARRIED,       
-                "john.doe@corporate.com",  
-                75000.0,                     
-                "5 years",                  
-                ManagerTypes.officeRegister, 
-                "MGR12345",                   
-                true                         
-            ));
-        librarians.add(new Librarian(
-        	    "librarian01",              // Login
-        	    "securePassword",           // Password
-        	    "Marat",                    // First Name
-        	    "Bystrov",                  // Surname
-        	    "Axmetov",                  // Middle Name
-        	    LocalDate.of(1985, 5, 20),  // Date of Birth
-        	    Gender.MALE,                // Gender
-        	    "American",                 // Nationality
-        	    1234567890,                 // Phone Number
-        	    "marat.bystrov@example.com",// Email
-        	    FamilyStatuses.MARRIED,     // Family Status
-        	    "marat.bystrov@library.com",// Corporate Email
-        	    50000.0,                    // Salary
-        	    "3 years",                  // Time of Experience
-        	    true                        // Is Researcher
-        	));
-        deans.add(
-        	    new Dean(
-        	        "dean01",                   // Login
-        	        "securePassword",           // Password
-        	        "Nursultan",                // First Name
-        	        "Nazarbayev",               // Surname
-        	        "Amanzholovich",            // Middle Name
-        	        LocalDate.of(1975, 4, 15),  // Date of Birth
-        	        Gender.MALE,                // Gender
-        	        "Kazakh",                   // Nationality
-        	        9876,                 // Phone Number
-        	        "nursultan.n@example.com",  // Email
-        	        FamilyStatuses.MARRIED,     // Family Status
-        	        "nursultan.n@university.com", // Corporate Email
-        	        75000.0,                    // Salary
-        	        "10 years",                 // Time of Experience
-        	        true                        // Is Researcher
-        	    ));
-
-        
-
      }
+        
+
      private static void saveData() {
          try {
              Data.write();
@@ -240,21 +104,17 @@ public class Data implements Serializable {
 
 
     public static Data read() throws IOException, ClassNotFoundException {
-        File file = new File("UniversityData");
-        if (!file.exists()) {
-            System.out.println("File not found, creating new data...");
-            return new Data();  // Return an empty Data object if the file doesn't exist
-        }
-        try (FileInputStream fis = new FileInputStream(file);
-             ObjectInputStream oin = new ObjectInputStream(fis)) {
-            return (Data) oin.readObject();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("UniversityData"))) {
+            return (Data) ois.readObject();
         }
     }
+
 
     private <T> void addAndSaveWithStream(Vector<T> collection, T data) {
         Stream.of(data).forEach(collection::add);
         saveData();  // Save after the addition
     }
+    
     public static int nextStudentId() {
         return INSTANCE.students.size() + 1;
     }
@@ -268,6 +128,7 @@ public class Data implements Serializable {
     public void addCurriculum(Curriculum curriculum) {
         addAndSaveWithStream(rup, curriculum);
     }
+
     public void addStudent(Student student) {
         addAndSaveWithStream(students, student);
     }
@@ -284,6 +145,11 @@ public class Data implements Serializable {
     public void addRequest(Request request) {
     	addAndSaveWithStream(requests, request);
     }
+	public void addManagers(Manager manager) {
+		addAndSaveWithStream(managers, manager);
+		
+	}
+
 
     public void addLesson(Lesson lesson) {
     	addAndSaveWithStream(lessons, lesson);
@@ -301,7 +167,6 @@ public class Data implements Serializable {
     public Vector<Student> getStudents() {
         return students;
     }
-
 
     public Vector<Teacher> getTeachers() {
         return teachers;
@@ -324,10 +189,27 @@ public class Data implements Serializable {
         return lessons;
     }
 
-
      public Vector<Request> getRequests() {
 	 return requests;
      }
+     public Vector<Curriculum> getRup() {
+ 		return rup;
+ 	}
+     public Vector<News> getNewsList() {
+ 	    return newsList;
+ 	}
+     public Vector<Journal> getJournals() {
+     	if (journals == null) {
+             journals = new Vector<>();  // Initialize if still null
+         }
+         return journals;
+     }
+     public Vector<Manager> getManagers() {
+ 		// TODO Auto-generated method stub
+ 		return managers;
+ 	}
+
+     
      
      public void updateCurriculumCourses(int semester, Specialties specialty, Faculties faculty, List<Course> newCourses) {
     	    // Find the curriculum for the given specialty and faculty
@@ -363,7 +245,8 @@ public class Data implements Serializable {
                     Data.INSTANCE.getTeachers().stream(),
                     Data.INSTANCE.getAdmins().stream(),
                     Data.INSTANCE.getLibrarians().stream(),
-                    Data.INSTANCE.getDeans().stream() // Assuming getDeans exists
+                    Data.INSTANCE.getDeans().stream(), // Assuming getDeans exists
+                    Data.INSTANCE.getManagers().stream()
                 )
                 .flatMap(stream -> stream) // Flatten the streams into a single stream
                 .filter(user -> user.getLogin().equals(login) && user.getPassword().equals(password))
@@ -377,6 +260,7 @@ public class Data implements Serializable {
                   .findFirst()
                   .orElse(null);  // Return null if no curriculum matches
     }
+
 
    
     public void displayData() {
@@ -393,11 +277,7 @@ public class Data implements Serializable {
     }
 
 
-	public Vector<Curriculum> getRup() {
-		return rup;
-	}
-
-
+	
 
 	public void setRup(Vector<Curriculum> rup) {
 		this.rup = rup;
@@ -406,98 +286,42 @@ public class Data implements Serializable {
 	    newsList.add(news);
 	}
 
-	public Vector<News> getNewsList() {
-	    return newsList;
-	}
-	public void resetNews() {
-        newsList.clear();
-        System.out.println("All news has been reset.");
-    }
-	
-	public void resetLibrary() {
-        books.clear();
-        System.out.println("All library has been reset.");
-    }
 	
 	public Vector<Book> getBooks() {
         return books;
     }
 	
 	public void addJournal(Journal journal) {
-        journals.add(journal);
         addAndSaveWithStream(journals, journal);
     }
-
-    public Vector<Journal> getJournals() {
-    	if (journals == null) {
-            journals = new Vector<>();  // Initialize if still null
-        }
-        return journals;
-    }
-    private Set<Manager> getManagers() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-   
-
-
-
+	    
 	public Vector<ResearchPaper> getResearchPapers() {
 		return researchPapers;
 	}
-
-
-
-
 
 	public Vector<ResearchProject> getResearchProjects() {
 		return researchProjects;
 	}
 
-
-
-
-
 	public void setResearchProjects(Vector<ResearchProject> researchProjects) {
 		this.researchProjects = researchProjects;
 	}
-
-
-
-
 
 	public void setResearchPapers(Vector<ResearchPaper> researchPapers) {
 		this.researchPapers = researchPapers;
 	}
 
-
-
-
-
 	public Vector<ResearchProject> getReseachProjects() {
 		return researchProjects;
 	}
-
-
-
-
 
 	public void setReseachProjects(Vector<ResearchProject> reseachProjects) {
 		this.researchProjects = reseachProjects;
 	}
 
-
-
-
-
 	public Vector<Researcher> getResearchers() {
 		return researchers;
 	}
-
-
-
-
 
 	public void setResearchers(Vector<Researcher> researchers) {
 		this.researchers = researchers;
@@ -506,26 +330,13 @@ public class Data implements Serializable {
 		return complaints;
 	}
 
-
-
-
-
 	private static int currentComplaintID = 0; // Хранит последний сгенерированный ID
 
 	public Integer generateComplaintID() {
 	    currentComplaintID++; // Увеличиваем текущий ID
 	    return currentComplaintID; // Возвращаем новый уникальный ID
 	}
-	private boolean containsLesson(Lesson lesson) {
-	    return lessons.stream().anyMatch(existingLesson -> existingLesson.equals(lesson));
-	}
-
-
-
-
-
-
-    public void addResearchPaper(ResearchPaper paper) {
+	public void addResearchPaper(ResearchPaper paper) {
         if (researchPapers == null) {
             researchPapers = new Vector<>();  // Fallback initialization
         }
@@ -537,13 +348,81 @@ public class Data implements Serializable {
         }
         researchProjects.add(project);
     }
-//	public void addResearchProject(ResearchProject project) {
-//		reseachProjects.add(project);
-//		
-//	}
-	public void addRup(Curriculum site1) {
-		addAndSaveWithStream(rup, site1);
-		
-		
+
+	public void resetNews() {
+        newsList.clear();
+        System.out.println("All news has been reset.");
+    }
+	
+	public void resetLibrary() {
+        books.clear();
+        System.out.println("All library has been reset.");
+    }
+	
+	
+	public void resetJournal() {
+        journals.clear();
+    }
+	public void resetPapers() {
+        researchPapers.clear();
+    }
+	public void resetDeans() {
+        deans.clear();
+    }
+
+    public void resetStudents() {
+        students.clear();
+    }
+
+    public void resetTeachers() {
+        Data.INSTANCE.teachers.clear();
+    }
+
+    public void resetManagers() {
+        managers.clear();
+    }
+
+    public void resetCourses() {
+        courses.clear();
+    }
+
+    public void resetLessons() {
+        lessons.clear();
+    }
+
+    public void resetSpecialty() {
+        specialty.clear();
+    }
+
+    public void resetAdmins() {
+        admins.clear();
+    }
+
+    public void resetRup() {
+        rup.clear();
+    }
+
+    public void resetLibrarians() {
+        librarians.clear();
+    }
+
+    public void resetComplaints() {
+        complaints.clear();
+    }
+
+    public void resetRequests() {
+        requests.clear();
+    }
+
+    public void resetResearchProjects() {
+        researchProjects.clear();
+    }
+
+    public void resetResearchers() {
+        researchers.clear();
+    }
+
+
+
 	}
-}
+

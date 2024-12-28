@@ -1,4 +1,3 @@
-
 package Views;
 
 import java.io.IOException;
@@ -7,15 +6,21 @@ import java.util.Scanner;
 
 import Education.News;
 import Education.Request;
+import Education.RequestType;
+import Education.StatusInfo;
 import Main.Data;
+import Main.UserSession;
+//import Education.News;
 import User.Student;
 
 public class ManagerView {
+    Scanner scanner = new Scanner(System.in);
+
 
     private static void save() throws IOException {
         Data.write(); // Save the data
     }
-
+    
     private void exit() {
         System.out.println("Goodbye, Manager!");
         try {
@@ -24,22 +29,26 @@ public class ManagerView {
             e.printStackTrace();
         }
     }
-
+     
     public void run() throws IOException {
-        Scanner scanner = new Scanner(System.in);
-
         try {
             while (true) { // Infinite loop until exit
-                // Display the manager menu
                 System.out.println("\n=== Manager Menu ===");
                 System.out.println("1. Statistics (Under Development)");
                 System.out.println("2. Show Requests (Under Development)");
                 System.out.println("3. View Student Info (Under Development)");
                 System.out.println("4. Publish News");
                 System.out.println("5. Exit");
-                System.out.println();
-                
+                System.out.println("6. Reset News");
+                System.out.println("7. Add request");
                 System.out.print("Enter your choice: ");
+
+                // Validate input
+                if (!scanner.hasNextInt()) {
+                    System.out.println("Invalid input. Please enter a number.");
+                    scanner.nextLine(); // Clear invalid input
+                    continue; // Restart loop for a valid input
+                }
 
                 int choice = scanner.nextInt();
                 scanner.nextLine(); // Consume the newline character
@@ -59,24 +68,57 @@ public class ManagerView {
                         break;
                     case 5:
                         System.out.println("Exiting the system. Goodbye!");
-                        exit(); // Call exit method to clean up before exiting
+                        exit();
                         return; // Exit the loop and terminate the program
-                    case 6: 
-                    	resetNews();
-                    	break;
+                    case 6:
+                        resetNews();
+                        break;
+                    case 7:
+                        String currentUserEmail = UserSession.getInstance().getLoggedInEmail();
+                        if (currentUserEmail != null) {
+                            addRequest(currentUserEmail);
+                        } else {
+                            System.out.println("Error: No user is logged in. Cannot create a request.");
+                        }
+                        break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
                 }
             }
         } catch (Exception e) {
-            System.out.println("Something bad happened... \n Saving resources...");
+            System.out.println("An error occurred. Saving resources...");
             e.printStackTrace();
-            save(); // Ensure data is saved if an error occurs
-        } finally {
-            scanner.close(); // Close scanner to avoid resource leak
+            save();
         }
+        // Removed scanner.close() to avoid closing the input stream
     }
 
+    public void addRequest(String currentUserEmail) {
+        System.out.println("Enter request details:");
+
+        String managerName = "Manager";
+        System.out.println("Enter request type (e.g., DORM_REQUEST, FX_REQUEST, INQUIRY):");
+        String requestTypeInput = scanner.nextLine();
+        RequestType requestType = RequestType.valueOf(requestTypeInput.toUpperCase());
+
+        System.out.println("Enter additional attribute for the request:");
+        String additionalAttribute = scanner.nextLine();
+
+        System.out.println("Enter request ID:");
+        int requestID = scanner.nextInt();
+        scanner.nextLine(); // consume the newline
+
+        if (currentUserEmail == null || currentUserEmail.isEmpty()) {
+            System.out.println("Error: No user is logged in. Cannot create request.");
+            return;
+        }
+
+        StatusInfo status = StatusInfo.IN_PROGRESS;
+
+        Request newRequest = new Request(requestID, status, managerName, requestType, additionalAttribute, currentUserEmail);
+        Data.INSTANCE.getRequests().add(newRequest);
+        System.out.println("Request added and status set to IN_PROGRESS!");
+    }
     // Statistics feature under development
  // Manage statistics: Calculate and display average GPA of all students
     private static void manageStatistics() {

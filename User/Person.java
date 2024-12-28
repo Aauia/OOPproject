@@ -179,13 +179,25 @@ public abstract class Person implements Serializable, Observer {
     	
     }
 
-	@Override
+
 	public String toString() {
-		return "Person [login=" + login + ", password=" + password + ", name=" + name + ", surname=" + surname
-				+ ", middleName=" + middleName + ", dateOfBirth=" + dateOfBirth + ", nationality=" + nationality
-				+ ", phoneNumber=" + phoneNumber + ", email=" + email + ", familyStatus=" + familyStatus
-				+ ", corporateEmail=" + corporateEmail + "]";
+	    StringBuilder sb = new StringBuilder();
+	    sb.append("Person {\n");
+	    sb.append("  login='").append(login).append("',\n");
+	    sb.append("  password='").append(password).append("',\n");
+	    sb.append("  name='").append(name).append("',\n");
+	    sb.append("  surname='").append(surname).append("',\n");
+	    sb.append("  middleName='").append(middleName).append("',\n");
+	    sb.append("  dateOfBirth='").append(dateOfBirth).append("',\n");
+	    sb.append("  nationality='").append(nationality).append("',\n");
+	    sb.append("  phoneNumber='").append(phoneNumber).append("',\n");
+	    sb.append("  email='").append(email).append("',\n");
+	    sb.append("  familyStatus='").append(familyStatus).append("',\n");
+	    sb.append("  corporateEmail='").append(corporateEmail).append("'\n");
+	    sb.append("}");
+	    return sb.toString();
 	}
+
 	
 	@Override
     public void update(ResearchPaper paper) {

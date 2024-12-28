@@ -267,7 +267,7 @@ public class Student extends Person  {
         return Objects.hash(studentId);
     }
 	public int getRequiredCredits() {
-		return 7;
+		return 23;
 	}
 	public void addCredits(Integer credit) {
 		credits+=credit;

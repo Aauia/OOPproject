@@ -26,6 +26,32 @@ public class LibrarianView {
         }
     }
 
+    public void addRequest(String currentUserEmail) {
+        System.out.println("Enter request details:");
+
+        String librarianName = "Librarian";
+        System.out.println("Enter request type (e.g., DORM_REQUEST, X_REQUEST, INQUIRY):");
+        String requestTypeInput = in.nextLine();
+        RequestType requestType = RequestType.valueOf(requestTypeInput.toUpperCase());
+
+        System.out.println("Enter additional attribute for the request:");
+        String additionalAttribute = in.nextLine();
+
+        System.out.println("Enter request ID:");
+        int requestID = in.nextInt();
+        in.nextLine(); // consume the newline
+
+        if (currentUserEmail == null || currentUserEmail.isEmpty()) {
+            System.out.println("Error: No user is logged in. Cannot create request.");
+            return;
+        }
+
+        StatusInfo status = StatusInfo.IN_PROGRESS;
+
+        Request newRequest = new Request(requestID, status, librarianName, requestType, additionalAttribute, currentUserEmail);
+        Data.INSTANCE.getRequests().add(newRequest);
+        System.out.println("Request added and status set to IN_PROGRESS!");
+    }
     public void run() throws IOException {
         try (Scanner scanner = new Scanner(System.in)) {
             while (true) {
@@ -36,6 +62,7 @@ public class LibrarianView {
                 System.out.println("3. Exit");
                 System.out.println("4. Reset Library");
                 System.out.println("5. View Borrowed Books Records");  // New option for borrowed books records
+                System.out.println("6. Add request");
                 System.out.print("Enter your choice: ");
 
                 int choice = scanner.nextInt();
@@ -57,6 +84,14 @@ public class LibrarianView {
                         break;
                     case 5:
                         viewBorrowedBooksRecords();  // Call the new method to view borrowed books records
+                        break;
+                    case 6:
+                    	String currentUserEmail = UserSession.getInstance().getLoggedInEmail();
+                        if (currentUserEmail != null) {
+                            addRequest(currentUserEmail);
+                        } else {
+                            System.out.println("Error: No user is logged in. Cannot create a request.");
+                        }
                         break;
                     default:
                         System.out.println("Invalid choice. Please try again.");
@@ -111,7 +146,6 @@ public class LibrarianView {
 
     
     private static void resetLibrary() {
-        
     	Data.INSTANCE.resetLibrary(); // Call reset method from Data class
     }
 

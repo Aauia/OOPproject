@@ -68,14 +68,24 @@ public class Curriculum implements Serializable {
 
 
 
+   
     @Override
     public String toString() {
-        return "Curriculum{" +
-                "specialty=" + specialty +
-                ", faculty=" + faculty +
-                ", semesterCourses=" + semesterCourses +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Curriculum{\n");
+        sb.append("  specialty=").append(specialty).append(",\n");
+        sb.append("  faculty=").append(faculty).append(",\n");
+        sb.append("  semesterCourses=\n");
+        for (Map.Entry<Integer, List<Course>> entry : semesterCourses.entrySet()) {
+            sb.append("    Semester ").append(entry.getKey()).append(":\n");
+            for (Course course : entry.getValue()) {
+                sb.append("      ").append(course).append("\n");
+            }
+        }
+        sb.append("}");
+        return sb.toString();
     }
+
 }
 
 

@@ -55,11 +55,17 @@ public class Schedule implements Serializable {
         }
     }
 
-    @Override
+
     public String toString() {
-        return "Schedule{" +
-                "studentID='" + studentID + '\'' +
-                ", lessons=" + lessons +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Schedule{\n");
+        sb.append("  studentID='").append(studentID).append("',\n");
+        sb.append("  lessons=\n");
+        for (Lesson lesson : lessons) {
+            sb.append("    ").append(lesson).append("\n");
+        }
+        sb.append("}");
+        return sb.toString();
     }
+
 }

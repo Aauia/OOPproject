@@ -22,8 +22,7 @@ public class ResearcherView {
             System.out.println("No user is logged in.");
             return;
         }
-        
-        // Получаем email текущего пользователя
+
         String currentUserEmail = userSession.getLoggedInEmail();
         
        
@@ -184,12 +183,34 @@ public class ResearcherView {
         return myPapers;
     }
 
-    private void calculateHIndex() {
-        // Для простоты можно добавить функциональность для вычисления H-индекса (например, на основе количества цитирований)
-        System.out.println("Calculating H-Index...");
-        // Реализация расчета H-индекса
+    private void calculateHIndex() { 
+        // Получаем только статьи текущего исследователя 
+        List<ResearchPaper> myPapers = getMyResearchPapers(); 
+ 
+        if (myPapers.isEmpty()) { 
+            System.out.println("No research papers found for the current user."); 
+            return; 
+        } 
+ 
+        // Извлекаем количество цитирований для каждой статьи и сортируем в порядке убывания 
+        List<Integer> citationCounts = myPapers.stream() 
+                .map(ResearchPaper::getNumberOfCitations) 
+                .sorted((a, b) -> b - a) 
+                .toList(); 
+ 
+        int hIndex = 0; 
+        // Рассчитываем H-индекс 
+        for (int i = 0; i < citationCounts.size(); i++) { 
+            if (citationCounts.get(i) >= i + 1) { 
+                hIndex = i + 1; 
+            } else { 
+                break; 
+            } 
+        } 
+ 
+        // Выводим результат 
+        System.out.println("H-Index for current user: " + hIndex); 
     }
-
     private void printResearchProjects() {
         System.out.println("\nResearch Projects:");
         List<ResearchProject> projects = Data.INSTANCE.getResearchProjects();

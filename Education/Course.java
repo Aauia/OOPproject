@@ -23,7 +23,6 @@ public class Course implements Serializable {
     private String courseName;
     private Access_Course type;
     private Integer credit;
-    private Integer  studentAmount;
     private Vector<Course> prerequisiteCourses; 
     private Vector<Faculties> sharedFaculties;
     private int lecture;
@@ -31,14 +30,12 @@ public class Course implements Serializable {
     
 
     // Constructor
-    public Course(String courseCode, String courseName, Access_Course type, int credit, 
-    		Integer  studentAmount,  
+    public Course(String courseCode, String courseName, Access_Course type, int credit,  
                   Vector<Course> prerequisiteCourses, Vector<Faculties> sharedFaculties,int lecture,int practice) {
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.type = type;
         this.credit = credit;
-        this.studentAmount = studentAmount ;
         this.prerequisiteCourses = prerequisiteCourses != null ? prerequisiteCourses : new Vector<>();
         
         // Initialize sharedFaculties if the type is SHARED
@@ -57,7 +54,8 @@ public class Course implements Serializable {
         this.setCourseName(courseName);
     }
 
-    // Getters and Setters
+
+	// Getters and Setters
     public String getCourseCode() {
         return courseCode;
     }
@@ -97,13 +95,7 @@ public class Course implements Serializable {
         this.credit = credit;
     }
 
-    public Integer getStudentAmount() {
-        return studentAmount;
-    }
 
-    public void setStudentAmount(Integer studentAmount) {
-        this.studentAmount = studentAmount;
-    }
 
 
     public Vector<Course> getPrerequisiteCourses() {
@@ -116,7 +108,9 @@ public class Course implements Serializable {
 
     public void addPrerequisiteCourse(Course course) {
         this.prerequisiteCourses.add(course);
+        
     }
+
 
     public void removePrerequisiteCourse(Course course) {
         this.prerequisiteCourses.remove(course);
@@ -157,13 +151,14 @@ public class Course implements Serializable {
     }
     @Override
     public String toString() {
-        return "Course{" +
-                "courseCode='" + courseCode + '\'' +
-                ", courseName='" + courseName + '\'' +
-                ", type=" + type +
-                ", credit=" + credit +
-                (sharedFaculties != null ? ", sharedFaculties=" + sharedFaculties : "") +
-                '}';
+        StringBuilder sb = new StringBuilder();
+        sb.append("Course{\n");
+        sb.append("  courseCode='").append(courseCode).append("',\n");
+        sb.append("  courseName='").append(courseName).append("',\n");
+        sb.append("  type=").append(type).append(",\n");
+        sb.append("  credit=").append(credit);
+        sb.append("\n}");
+        return sb.toString();
     }
 
     @Override

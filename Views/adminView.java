@@ -282,7 +282,7 @@ public class adminView {
         }
 
         // Create a new Course object
-        Course newCourse = new Course(courseCode, courseName, type, credit, studentAmount, null, sharedFaculties, numPrereqs, numPrereqs);
+        Course newCourse = new Course(courseCode, courseName, type, credit,  null, sharedFaculties, numPrereqs, numPrereqs);
         
         // Add the course to your course list (assuming Data.INSTANCE.getCourses() is your course list)
         Data.INSTANCE.getCourses().add(newCourse);
