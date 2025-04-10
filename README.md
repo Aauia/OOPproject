@@ -24,7 +24,7 @@ This project simulates core components of a university system, including:
 - **Data Models:** `ResearchPaper`, `Journal`, `ResearchProject`, `Curriculum`, etc.
 
 ### 📂 Branch Structure
-The project code resides in the [`gentian`](https://github.com/your-username/your-repo/tree/gentian) branch to separate it from main/test code.
+The project code resides in the [`genMain`](https://github.com/your-username/your-repo/tree/gentian](https://github.com/Aauia/OOPproject.git)) branch to separate it from main/test code.
 
 
 ### Presentation 
